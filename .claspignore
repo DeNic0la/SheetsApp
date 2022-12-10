@@ -1,0 +1,6 @@
+README.md
+/node_modules/*
+.gitignore
+SheetsExtension.iml
+package.json
+package-lock.json

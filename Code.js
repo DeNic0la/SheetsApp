@@ -1,6 +1,7 @@
 function onOpen() {
     let ui = SpreadsheetApp.getUi();
     ui.createAddonMenu().addItem("testFunction", "myTest")
+        .addToUi();
 }
 
 function myTest() {
