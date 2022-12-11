@@ -3,10 +3,8 @@
 const AREA_NAME_NOON = "nachmittage"
 const AREA_NAME_MEETINGS= "sitzungen"
 
-const NOON_END_TIME = [17,15]
-
-
-
+const NOON_END_TIME = [17,15];
+const MEETING_END_TIM = [20,15];
 
 
 function onOpen() {
@@ -22,7 +20,19 @@ function myTest() {
 function onInstall(){
     onOpen();
 }
+function getNoonsAsObj(){
+    let noons = getDataByRange(AREA_NAME_NOON);
+    let noonObjs = []
+    for (let i = 0; i < noons.length; i++) {
+        let noon = noons[i];
+        if (noon[0].trim().length <= 0) // Skip Empty
+            continue;
 
+        noonObjs.push(noonArrayToObject(noon));
+    }
+    return noonObjs;
+
+}
 function getDataByRange(rangeName) {
     return SpreadsheetApp.getActiveSpreadsheet().getRangeByName(rangeName).getValues();
 }
