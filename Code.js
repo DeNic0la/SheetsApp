@@ -11,7 +11,7 @@ const CALENDER_ID = "hv0f19qpcmhch895bu4akmk6o4@group.calendar.google.com";
 
 function onOpen() {
     let ui = SpreadsheetApp.getUi();
-    ui.createAddonMenu().addItem("testFunction", "myTest")
+    ui.createAddonMenu()
         .addItem("generateCalEvents","generateCalEvents")
         .addItem("Check Permissions","checkPermissions")
         .addToUi();
@@ -78,7 +78,17 @@ function getNoonContext(noon){
         `Thema: ${noon.name}`,
         `Tagesleitung: ${noon.lead}`
     ]
+    if (isValidString(noon.lunch)){
+        context.push(`Mittagessen: ${noon.lunch}`)
+    }
+    if (isValidString(noon.impMessage)){
+        context.push(noon.impMessage)
+    }
     return context.join("\n");
+}
+
+function isValidString(toTest){
+    return (toTest && typeof toTest === "string" && toTest.trim().length > 0)
 }
 function mergeNoonsToMeetings(leNoons,leMeetings){
     let meetings = leMeetings;
