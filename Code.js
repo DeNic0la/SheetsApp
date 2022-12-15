@@ -42,6 +42,8 @@ function generateCalEvents(){
 }
 
 function generateNoons(cal, noons) {
+    let rangeByName = SpreadsheetApp.getActiveSpreadsheet().getRangeByName(AREA_NAME_NOON);
+
     for (let i = 0; i < noons.length; i++) {
         let noon = noons[i];
 
@@ -60,6 +62,8 @@ function generateNoons(cal, noons) {
             }
         );
 
+        // set Calender Id to Sheet
+        rangeByName.getCell(i,8).setValue( event.getId() );
     }
 }
 
