@@ -49,8 +49,6 @@ function generateNoons(cal, noons) {
 
         let id = upsertNoonCalender(cal,noon)
 
-
-
         // set Calender Id to Sheet
         rangeByName.getCell((i+1) /*Index + 1 */,8).setValue( id );
     }
@@ -67,7 +65,7 @@ function upsertNoonCalender(cal,noon){
     }
     else {
         calEvent.setTitle(title);
-        calEvent.setTime(noon.startDate, noon.endTime);
+        calEvent.setTime(noon.startDate, noon.endDate);
     }
     calEvent.setDescription(context);
     calEvent.setLocation(place);
