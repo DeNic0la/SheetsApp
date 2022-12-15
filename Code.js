@@ -13,6 +13,7 @@ function onOpen() {
     let ui = SpreadsheetApp.getUi();
     ui.createAddonMenu().addItem("testFunction", "myTest")
         .addItem("generateCalEvents","generateCalEvents")
+        .addItem("Check Permissions","checkPermissions")
         .addToUi();
 }
 
@@ -24,6 +25,12 @@ function onInstall(){
     onOpen();
 }
 
+function checkPermissions(){
+    let name = CalendarApp.getName();
+    if (name.length > 0){
+        SpreadsheetApp.getUi().alert("You have granted all the Required permissions")
+    }
+}
 
 function generateCalEvents(){
 
