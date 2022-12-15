@@ -48,7 +48,7 @@ function generateNoons(cal, noons) {
         let title = `Jungschi [ ${noon.place} ]`;
         let context = getNoonContext(noon);
 
-        let place = (noon.place === "MK" ? "Markuskirche Luzern" : noon.place);
+        let place = (noon.place.trim() === "MK" ? "Markuskirche Luzern" : noon.place);
 
         let event = cal.createEvent(
             title,
