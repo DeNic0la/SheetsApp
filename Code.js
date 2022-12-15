@@ -61,7 +61,7 @@ function getMeetingsAsObj(){
     let meetingObjs = [];
     for (let i = 0; i < meetings.length; i++) {
         let meeting = meetings[i];
-        if (meeting[0].trim().length <= 0)// Skip Empty
+        if (meeting && meeting[0].trim().length <= 0)// Skip Empty
             continue;
 
         meetingObjs.push(meetingArrayToObject(meeting));
@@ -74,7 +74,7 @@ function getNoonsAsObj(){
     let noonObjs = []
     for (let i = 0; i < noons.length; i++) {
         let noon = noons[i];
-        if (noon[0].trim().length <= 0) // Skip Empty
+        if ( noon && noon[0].trim().length <= 0) // Skip Empty
             continue;
 
         noonObjs.push(noonArrayToObject(noon));
