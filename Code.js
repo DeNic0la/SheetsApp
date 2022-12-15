@@ -47,26 +47,32 @@ function generateNoons(cal, noons) {
     for (let i = 0; i < noons.length; i++) {
         let noon = noons[i];
 
-        let title = `Jungschi [ ${noon.place} ]`;
-        let context = getNoonContext(noon);
+        let id = upsertNoonCalender(cal,noon)
 
-        let place = (noon.place.trim() === "MK" ? "Markuskirche Luzern" : noon.place);
 
-        let event = cal.createEvent(
-            title,
-            noon.startDate,
-            noon.endDate,
-            {
-                description: context,
-                location: place
-            }
-        );
 
         // set Calender Id to Sheet
-        SpreadsheetApp.getUi().alert( rangeByName.getCell(i,7).getValue() )
-
-        rangeByName.getCell(i,7).setValue( event.getId() );
+        rangeByName.getCell((i+1) /*Index + 1 */,8).setValue( id );
     }
+}
+
+function upsertNoonCalender(cal,noon){
+    let title = `Jungschi [ ${noon.place} ]`;
+    let context = getNoonContext(noon);
+
+    let place = (noon.place.trim() === "MK" ? "Markuskirche Luzern" : noon.place);
+    let calEvent = cal.getEventById(noon.calId);
+    if (calEvent === null){
+        calEvent = cal.createEvent(title, noon.startDate, noon.endDate);
+    }
+    else {
+        calEvent.setTitle(title);
+        calEvent.setTime(noon.startDate, noon.endTime);
+    }
+    calEvent.setDescription(context);
+    calEvent.setLocation(place);
+
+    return calEvent.getId();
 }
 
 function getNoonContext(noon){
