@@ -68,26 +68,42 @@ function getMeetingsAsObj(){
     let meetingObjs = [];
     for (let i = 0; i < meetings.length; i++) {
         let meeting = meetings[i];
-        if (meeting && meeting[0].trim().length <= 0)// Skip Empty
-            continue;
+        if ( isEmpty(meeting[0]) )
+            continue;// Skip Empty
 
         meetingObjs.push(meetingArrayToObject(meeting));
     }
     return meetingObjs;
 }
 
+
 function getNoonsAsObj(){
     let noons = getDataByRange(AREA_NAME_NOON);
     let noonObjs = []
     for (let i = 0; i < noons.length; i++) {
         let noon = noons[i];
-        if ( noon && noon[0].trim().length <= 0) // Skip Empty
-            continue;
+        if ( isEmpty(noon[0]) )
+            continue;// Skip Empty
 
         noonObjs.push(noonArrayToObject(noon));
     }
     return noonObjs;
 }
+
+function isEmpty(dateField) {
+    if (dateField === "Datum")
+        return true;
+    if (dateField instanceof Date){
+        return false;
+    }
+    else if (typeof dateField === 'string') {
+        return (dateField.trim().length <= 0)
+    }
+    else {
+        return (dateField.toString().trim().length <= 0)
+    }
+}
+
 function getDataByRange(rangeName) {
     return SpreadsheetApp.getActiveSpreadsheet().getRangeByName(rangeName).getValues();
 }
