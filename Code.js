@@ -230,7 +230,7 @@ function noonArrayToObject(array){
 
 function isNormalMeeting(meetingContext) {
     const regexp = "[\.0-9]{3,} ?[\.0-9]*";
-    return (meetingContext.match(regexp) || meetingContext.trim() === "Semestersitzung")
+    return (meetingContext.match(regexp) )
 }
 
 function meetingArrayToObject(array){
