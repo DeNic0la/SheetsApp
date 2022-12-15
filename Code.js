@@ -12,15 +12,11 @@ const CALENDER_ID = "hv0f19qpcmhch895bu4akmk6o4@group.calendar.google.com";
 function onOpen() {
     let ui = SpreadsheetApp.getUi();
     ui.createAddonMenu()
-        .addItem("generateCalEvents","generateCalEvents")
-        .addItem("Check Permissions","checkPermissions")
+        .addItem("Kalender Aktualisieren","generateCalEvents")
+        .addItem("Berechtugungen überprüfen","checkPermissions")
         .addToUi();
 }
 
-function myTest() {
-    console.log("Hello this is a test");
-    SpreadsheetApp.getUi().alert("Test");
-}
 function onInstall(){
     onOpen();
 }
