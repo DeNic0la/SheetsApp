@@ -39,6 +39,19 @@ function generateCalEvents(){
     let mergedMeetings = mergeNoonsToMeetings(noons, getMeetingsAsObj());
 
     generateNoons(cal,noons);
+    generateMeetings(cal,mergedMeetings);
+}
+function generateMeetings(cal, meetings) {
+    let rangeByName = SpreadsheetApp.getActiveSpreadsheet().getRangeByName(AREA_NAME_MEETINGS);
+
+    for (let i = 0; i < meetings.length; i++) {
+        let meeting = meetings[i];
+
+        let id = upsertMeetingCalender(cal,meeting)
+
+        // set Calender Id to Sheet
+        rangeByName.getCell((i+1) /*Index + 1 */,8).setValue( id );
+    }
 }
 
 function generateNoons(cal, noons) {
@@ -73,6 +86,45 @@ function upsertNoonCalender(cal,noon){
     return calEvent.getId();
 }
 
+function upsertMeetingCalender(cal,meeting){
+    const normalMeeting = meeting.normalMeeting;
+    let title = normalMeeting ? "Jungschisitzung": meeting.meetingType;
+    let context = getMeetingContext(meeting);
+
+    let place = (meeting.place.trim() === "Sekretariat" ? "Sekretariat Markuskirche Luzern" : (meeting.place.trim() === "MK" ? "Markuskirche Luzern" : meeting.place) );
+    let calEvent = cal.getEventById(meeting.calId);
+    if (calEvent === null){
+        calEvent = cal.createEvent(title, meeting.startDate, meeting.endDate);
+    }
+    else {
+        calEvent.setTitle(title);
+        calEvent.setTime(meeting.startDate, meeting.endDate);
+    }
+    calEvent.setDescription(context);
+    calEvent.setLocation(place);
+
+    return calEvent.getId();
+}
+
+function getMeetingContext(meeting){
+    let context = [
+        `Protokoll: ${meeting.mProtocol}`,
+        `Lead & Input: ${meeting.mInput}`,
+        `Dessert: ${meeting.mDesert}`
+    ];
+    if (meeting.normalMeeting) {
+        context.push("");
+        context.push("Nachmittage:");
+        const noons = meeting.noons;
+        for (let i = 0; i < noons.length; i++) {
+            const noon = noons[i];
+            context.push(`${noon.name}: ${noon.lead}`)
+        }
+    }
+
+    return context.join("\n");
+
+}
 function getNoonContext(noon){
     let context = [
         `Thema: ${noon.name}`,
