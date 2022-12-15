@@ -38,11 +38,37 @@ function generateCalEvents(){
     let noons = getNoonsAsObj();
     let mergedMeetings = mergeNoonsToMeetings(noons, getMeetingsAsObj());
 
-    let name = cal.getName();
-    console.log(name);
-    SpreadsheetApp.getUi().alert(name);
+    generateNoons(cal,noons);
+}
 
+function generateNoons(cal, noons) {
+    for (let i = 0; i < noons.length; i++) {
+        let noon = noons[i];
 
+        let title = `Jungschi [ ${noon.place} ]`;
+        let context = getNoonContext(noon);
+
+        let place = (noon.place === "MK" ? "Markuskirche Luzern" : noon.place);
+
+        let event = cal.createEvent(
+            title,
+            noon.startDate,
+            noon.endDate,
+            {
+                description: context,
+                location: place
+            }
+        );
+
+    }
+}
+
+function getNoonContext(noon){
+    let context = [
+        `Thema: ${noon.name}`,
+        `Tagesleitung: ${noon.lead}`
+    ]
+    return context.join("\n");
 }
 function mergeNoonsToMeetings(leNoons,leMeetings){
     let meetings = leMeetings;
