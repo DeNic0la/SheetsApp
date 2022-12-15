@@ -63,7 +63,9 @@ function generateNoons(cal, noons) {
         );
 
         // set Calender Id to Sheet
-        rangeByName.getCell(i,8).setValue( event.getId() );
+        SpreadsheetApp.getUi().alert( rangeByName.getCell(i,7).getValue() )
+
+        rangeByName.getCell(i,7).setValue( event.getId() );
     }
 }
 
