@@ -165,7 +165,7 @@ function isMorning(date) {
 }
 
 function isValidEntry(name){
-    return isValidString(name) && (name.trim().length > 3);
+    return isValidString(name) && (name.trim().length > 2);
 }
 function getNoonContext(noon){
     let context = [
