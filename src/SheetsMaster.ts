@@ -19,13 +19,6 @@ export class SheetsMaster {
 
             } else {
                 MyLogger.info("Nachmittag Nr:" + (i + 1) + " wurde übersprungen")
-                let info = {
-                    "HasValidDate": Validator.isValidDateField(noon[0]),
-                    "Datefield":noon[0],
-                    "HasValidTimeplace": Validator.isValidTimePlaceField(noon[1]),
-                    "Timeplace": noon[1],
-                    "length": noon.length,
-                }
             }
 
 
