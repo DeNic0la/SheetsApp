@@ -4,11 +4,11 @@ import Calendar = GoogleAppsScript.Calendar.Calendar;
 import CalendarEvent = GoogleAppsScript.Calendar.CalendarEvent;
 import {DataMaster} from "./DataMaster";
 
-export class CalendarMaster{
-    static generateMeetings(cal:Calendar, meetings:MeetingInfo[]) {
+export class CalendarMaster {
+    static generateMeetings(cal: Calendar, meetings: MeetingInfo[]) {
         let rangeByName = SpreadsheetApp.getActiveSpreadsheet().getRangeByName(Constant.AREA_NAME_MEETINGS);
-        if (rangeByName === null){
-            throw new Error("Folgender bereich wurde nicht gesetzt: "+Constant.AREA_NAME_MEETINGS)
+        if (rangeByName === null) {
+            throw new Error("Folgender bereich wurde nicht gesetzt: " + Constant.AREA_NAME_MEETINGS)
         }
         for (let i = 0; i < meetings.length; i++) {
             let meeting = meetings[i];
@@ -19,10 +19,11 @@ export class CalendarMaster{
             rangeByName.getCell((i + 1) /*Index + 1 */, 8).setValue(id);
         }
     }
-    static generateNoons(cal:Calendar, noons:NoonInfo[]):void {
+
+    static generateNoons(cal: Calendar, noons: NoonInfo[]): void {
         let rangeByName = SpreadsheetApp.getActiveSpreadsheet().getRangeByName(Constant.AREA_NAME_NOON);
-        if (rangeByName === null){
-            throw new Error("Folgender bereich wurde nicht gesetzt: "+Constant.AREA_NAME_NOON)
+        if (rangeByName === null) {
+            throw new Error("Folgender bereich wurde nicht gesetzt: " + Constant.AREA_NAME_NOON)
         }
         for (let i = 0; i < noons.length; i++) {
             let noon = noons[i];
@@ -33,12 +34,13 @@ export class CalendarMaster{
             rangeByName.getCell((i + 1) /*Index + 1 */, 8).setValue(id);
         }
     }
-    static upsertNoonCalender(cal:Calendar, noon:NoonInfo):string {
+
+    static upsertNoonCalender(cal: Calendar, noon: NoonInfo): string {
         let title = `Jungschi [ ${noon.place} ]`;
         let context = DataMaster.getNoonContext(noon);
 
         let place = (noon.place.trim() === "MK" ? "Markuskirche Luzern" : noon.place);
-        let calEvent:CalendarEvent | null = null
+        let calEvent: CalendarEvent | null = null
 
         if (typeof noon.calId === "string") {
             calEvent = cal.getEventById(noon.calId);
@@ -55,13 +57,13 @@ export class CalendarMaster{
         return calEvent.getId();
     }
 
-    static upsertMeetingCalender(cal:Calendar, meeting:MeetingInfo) {
+    static upsertMeetingCalender(cal: Calendar, meeting: MeetingInfo) {
         const normalMeeting = meeting.normalMeeting;
         let title = normalMeeting ? "Jungschisitzung" : meeting.meetingType;
         let context = DataMaster.getMeetingContext(meeting);
 
         let place = (meeting.place.trim() === "Sekretariat" ? "Sekretariat Markuskirche Luzern" : (meeting.place.trim() === "MK" ? "Markuskirche Luzern" : meeting.place));
-        let calEvent:CalendarEvent|null = null;
+        let calEvent: CalendarEvent | null = null;
 
         if (typeof meeting.calId === "string") {
             calEvent = cal.getEventById(meeting.calId);

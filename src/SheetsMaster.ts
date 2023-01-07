@@ -8,18 +8,17 @@ const AREA_NAME_NOON = "nachmittage"
 
 export class SheetsMaster {
 
-    static getNoonsAsObj():NoonInfo[] {
+    static getNoonsAsObj(): NoonInfo[] {
         let noons = DataRangeManger.getDataByRange(AREA_NAME_NOON);
         let noonObjs = []
         for (let i = 0; i < noons.length; i++) {
             let noon = noons[i];
 
-            if (Validator.isValidNoonEntryFields(noon)){
+            if (Validator.isValidNoonEntryFields(noon)) {
                 noonObjs.push(SheetsMaster.noonArrayToObject(noon));
 
-            }
-            else {
-                MyLogger.info("Nachmittag Nr:" + (i+1) +" wurde übersprungen")
+            } else {
+                MyLogger.info("Nachmittag Nr:" + (i + 1) + " wurde übersprungen")
             }
 
 
@@ -27,7 +26,7 @@ export class SheetsMaster {
         return noonObjs;
     }
 
-    static noonArrayToObject(array:NoonEntryFields):NoonInfo {
+    static noonArrayToObject(array: NoonEntryFields): NoonInfo {
         let date = array[0]
         let timePlace = array[1].split("/") // 00:00 / Place to ["00:00", "Place"]
         let time = timePlace[0].trim().split(":") // " 00:00 " to ["00","00"]
@@ -54,7 +53,7 @@ export class SheetsMaster {
         }
     }
 
-    static meetingArrayToObject(array:MeetingEntryFields):MeetingInfo {
+    static meetingArrayToObject(array: MeetingEntryFields): MeetingInfo {
         let date = array[0]
         let timePlace = array[1].split("/") // 00:00 / Place to ["00:00", "Place"]
         let time = timePlace[0].trim().split(":") // " 00:00 " to ["00","00"]
@@ -62,7 +61,6 @@ export class SheetsMaster {
         let endDate = new Date(date);
         let meetingContext = array[5];
         let normalMeeting = Validator.isNormalMeeting(meetingContext);
-
 
 
         startDate.setHours(parseInt(time[0]));
@@ -77,7 +75,7 @@ export class SheetsMaster {
         }
 
 
-        let obj:MeetingInfo = {
+        let obj: MeetingInfo = {
             date,
             startDate,
             endDate,
@@ -97,16 +95,15 @@ export class SheetsMaster {
         return obj;
     }
 
-    static getMeetingsAsObj():MeetingInfo[] {
+    static getMeetingsAsObj(): MeetingInfo[] {
         let meetings = DataRangeManger.getDataByRange(Constant.AREA_NAME_MEETINGS);
         let meetingObjs = [];
         for (let i = 0; i < meetings.length; i++) {
             let meeting = meetings[i];
-            if (Validator.isValidMeetingEntryFields(meeting)){
+            if (Validator.isValidMeetingEntryFields(meeting)) {
                 meetingObjs.push(SheetsMaster.meetingArrayToObject(meeting));
-            }
-            else {
-                MyLogger.info("Sitzung Nr:" + (i+1) +" wurde übersprungen")
+            } else {
+                MyLogger.info("Sitzung Nr:" + (i + 1) + " wurde übersprungen")
             }
         }
         return meetingObjs;

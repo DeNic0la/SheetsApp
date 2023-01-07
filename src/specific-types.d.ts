@@ -16,6 +16,7 @@ type ValidField = string
 type ValidEntryFields = NoonEntryFields | MeetingEntryFields;
 type NoonList = `${NoonDate} ${NoonDate}` | NoonDate;
 type NoonDate = `${number}.${number}.${number}`;
+
 interface DateEntryInfo {
     date: DateField,
     startDate: Date,
@@ -25,28 +26,33 @@ interface DateEntryInfo {
     excused: ExcusedField,
 
 }
-interface NoonInfo extends DateEntryInfo{
+
+interface NoonInfo extends DateEntryInfo {
     name: TopicField,
     lead: LeadField,
     lunch: LunchField,
     impMessage: MessageField,
 }
+
 interface MeetingInfo extends DateEntryInfo {
     normalMeeting: boolean,
     mProtocol: ProtocolField,
     mInput: InputField,
     mDesert: DessertField
-    noons?:any,
-    meetingType?:any,
+    noons?: any,
+    meetingType?: any,
 
 }
-interface NormalMeetingInfo extends MeetingInfo{
+
+interface NormalMeetingInfo extends MeetingInfo {
     noons: NoonDate[]
 }
-interface MergedNormalMeetingInfo extends MeetingInfo{
+
+interface MergedNormalMeetingInfo extends MeetingInfo {
     noons: NoonInfo[]
 }
-interface SpecialMeetingInfo extends MeetingInfo{
+
+interface SpecialMeetingInfo extends MeetingInfo {
     meetingType: string
 }
 

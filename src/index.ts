@@ -13,6 +13,7 @@ function onOpen() {
         .addItem("Berechtugungen überprüfen", "checkPermissions")
         .addToUi();
 }
+
 function onInstall() {
     onOpen();
 }
@@ -23,9 +24,10 @@ function checkPermissions() {
         SpreadsheetApp.getUi().alert("Alles ist Startbereit")
     }
 }
+
 function generateCalEvents() {
 
-    let cal:Calendar = CalendarApp.getCalendarById(Constant.CALENDER_ID);
+    let cal: Calendar = CalendarApp.getCalendarById(Constant.CALENDER_ID);
     let noons = SheetsMaster.getNoonsAsObj();
     let mergedMeetings = DataMaster.mergeNoonsToMeetings(noons, SheetsMaster.getMeetingsAsObj());
 

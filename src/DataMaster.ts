@@ -2,8 +2,8 @@ import {MeetingInfo, NoonDate, NoonInfo} from "./specific-types";
 import {Validator} from "./Validator";
 import {MyLogger} from "./Logger";
 
-export class DataMaster{
-    static mergeNoonsToMeetings(leNoons:NoonInfo[], leMeetings:MeetingInfo[]) {
+export class DataMaster {
+    static mergeNoonsToMeetings(leNoons: NoonInfo[], leMeetings: MeetingInfo[]) {
         let meetings = leMeetings;
         for (let i = 0; i < meetings.length; i++) {
             let meeting = meetings[i]
@@ -12,11 +12,10 @@ export class DataMaster{
                 let meetingNoonObjs = [];
                 for (let j = 0; j < meetingNoons.length; j++) {
                     let noonInfo = DataMaster.findNoonByDate(leNoons, meetingNoons[j]);
-                    if (noonInfo){
+                    if (noonInfo) {
                         meetingNoonObjs.push(noonInfo)
-                    }
-                    else {
-                        MyLogger.warn("Folgender Nachmittag der Sitzung vom "+ meeting.date+ " wurde nich gefunden:"+ meetingNoons[j] )
+                    } else {
+                        MyLogger.warn("Folgender Nachmittag der Sitzung vom " + meeting.date + " wurde nich gefunden:" + meetingNoons[j])
                     }
                 }
                 meetings[i].noons = meetingNoonObjs;
@@ -25,7 +24,7 @@ export class DataMaster{
         return meetings;
     }
 
-    static getNoonContext(noon:NoonInfo):string {
+    static getNoonContext(noon: NoonInfo): string {
         let context = [
             `Thema: ${noon.name}`,
             `Tagesleitung: ${noon.lead}`
@@ -38,7 +37,8 @@ export class DataMaster{
         }
         return context.join("\n");
     }
-    static getMeetingContext(meeting:MeetingInfo):string {
+
+    static getMeetingContext(meeting: MeetingInfo): string {
 
         let context = [];
 
@@ -69,7 +69,8 @@ export class DataMaster{
         return context.join("\n");
 
     }
-    static findNoonByDate(noons:NoonInfo[], date:NoonDate) {
+
+    static findNoonByDate(noons: NoonInfo[], date: NoonDate) {
         return noons.find(value => {
             return (typeof value.date === "string" ? value.date.trim() : `${value.date.getDate()}.${value.date.getMonth() + 1}.${value.date.getFullYear()}`) === date.trim();
         });
