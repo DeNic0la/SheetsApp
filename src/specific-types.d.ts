@@ -26,6 +26,10 @@ interface DateEntryInfo {
     excused: ExcusedField,
 
 }
+export interface TypesafeCalender{
+    getEventById(id:String):TypesafeCalendarEvent
+}
+
 
 interface NoonInfo extends DateEntryInfo {
     name: TopicField,
@@ -82,3 +86,5 @@ export {
     SpecialMeetingInfo,
     MergedNormalMeetingInfo
 }
+export type Calendar = GoogleAppsScript.Calendar.Calendar;
+export type CalendarEvent = GoogleAppsScript.Calendar.CalendarEvent;

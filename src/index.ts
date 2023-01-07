@@ -1,23 +1,17 @@
-import Calendar = GoogleAppsScript.Calendar.Calendar;
 import {MyLogger} from "./Logger";
 import {Constant} from "./Constant";
 import {SheetsMaster} from "./SheetsMaster";
 import {CalendarMaster} from "./CalendarMaster";
 import {DataMaster} from "./DataMaster";
-import Menu = GoogleAppsScript.Base.Menu;
-
+import {Calendar} from "./specific-types";
 
 function onOpen() {
     let ui = SpreadsheetApp.getUi();
-    addItems(ui.createAddonMenu())
-    addItems(ui.createMenu("Jungschi Kalender")
-    )
-}
-function addItems(menu:Menu){
-    menu.addItem("Kalender Aktualisieren", "generateCalEvents")
+    ui.createAddonMenu().addItem("Kalender Aktualisieren", "generateCalEvents")
         .addItem("Berechtugungen überprüfen", "checkPermissions")
         .addToUi();
 }
+
 
 function onInstall() {
     onOpen();

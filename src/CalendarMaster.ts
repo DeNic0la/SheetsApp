@@ -1,7 +1,5 @@
-import {MeetingInfo, NoonInfo} from "./specific-types";
+import {Calendar, CalendarEvent, MeetingInfo, NoonInfo} from "./specific-types";
 import {Constant} from "./Constant";
-import Calendar = GoogleAppsScript.Calendar.Calendar;
-import CalendarEvent = GoogleAppsScript.Calendar.CalendarEvent;
 import {DataMaster} from "./DataMaster";
 
 export class CalendarMaster {
