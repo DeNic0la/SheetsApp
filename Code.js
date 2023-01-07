@@ -1,3 +1,4 @@
+
 const AREA_NAME_NOON = "nachmittage"
 const AREA_NAME_MEETINGS = "sitzungen"
 
@@ -314,8 +315,10 @@ function meetingArrayToObject(array) {
         calId: array[7]
     }
     if (normalMeeting) {
+        // @ts-ignore
         obj.noons = meetingContext.split(" ");
     } else {
+        // @ts-ignore
         obj.meetingType = meetingContext;
     }
     return obj;
