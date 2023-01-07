@@ -71,29 +71,13 @@ export class DataMaster {
     }
 
     static findNoonByDate(noons: NoonInfo[], date: NoonDate):NoonInfo|undefined {
-        let search = new Date(date).getTime();
-        let darray: string[] = []
-        let a =  noons.find(value => {
-            let val = (typeof value.date === "string" ? new Date(value.date): value.date)
-            if (val.getTime() === search)
-                return true;
-            let d = ""+value.startDate.getDate()+"."+(value.startDate.getMonth()+1)+"."+value.startDate.getFullYear();
-            darray.push(d);
-            return d === date.trim()
-        });
-        MyLogger.info("Equals: "+a+" {"+ JSON.stringify(darray)+"|"+date+"}")
-
-        return a
-        let lookupDateTime = new Date(date).getTime();
-
         return noons.find(value => {
-            let val = (typeof value.date === "string" ? new Date(value.date): value.date)
-            let a = (lookupDateTime === val.getTime())
-            if (a){
-                MyLogger.info("Equals: "+a+" {"+ JSON.stringify(value)+"|"+date+"}")
+            let val = (typeof value.date === "string" ? new Date(value.date) : value.date)
+            let d = ('0' + val.getDate()).slice(-2) + '.'
+                + ('0' + (val.getMonth() + 1)).slice(-2) + '.'
+                + val.getFullYear();
+            return d === date.trim()
+        })
 
-            }
-            return a;
-        });
     }
 }

@@ -26,12 +26,10 @@ export class SheetsMaster {
                     "Timeplace": noon[1],
                     "length": noon.length,
                 }
-                MyLogger.info(JSON.stringify(info));
             }
 
 
         }
-        MyLogger.info("NOONS: "+JSON.stringify(noonObjs))
         return noonObjs;
     }
 
