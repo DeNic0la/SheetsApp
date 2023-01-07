@@ -1,9 +1,26 @@
 {
+  "name": "SheetsExtension",
+  "main": "index.js",
+  "scripts": {
+    "build": "rollup --config",
+    "deploy": "clasp push",
+    "push": "run-s build deploy"
+  },
   "dependencies": {
-    "typescript": "^3.8.2"
+    "moment": "^2.29.1"
   },
   "devDependencies": {
-    "@types/google-apps-script-oauth2": "^38.0.0",
-    "@types/google-apps-script": "^1.0.56"
+    "@babel/core": "^7.12.10",
+    "@babel/plugin-transform-runtime": "^7.12.10",
+    "@babel/preset-env": "^7.12.11",
+    "@babel/preset-typescript": "^7.12.7",
+    "@google/clasp": "^2.3.0",
+    "@rollup/plugin-babel": "^5.2.2",
+    "@rollup/plugin-node-resolve": "^11.0.1",
+    "@types/google-apps-script": "^1.0.20",
+    "@types/node": "^12.19.9",
+    "npm-run-all": "^4.1.5",
+    "rollup": "^2.35.1",
+    "typescript": "^4.1.3"
   }
 }

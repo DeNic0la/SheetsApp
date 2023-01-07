@@ -1,13 +1,23 @@
 {
   "compilerOptions": {
-    "isolatedModules": true,
-    "noLib": true,
-    "noResolve": true,
     "target": "ES2019",
-    "module": "None",
-    "noImplicitUseStrict": true,
-    "experimentalDecorators": true,
-    "types": ["google-apps-script", "google-apps-script-oauth2"],
+    "lib": [
+      "esnext"
+    ],
+    "allowJs": true,
+    "skipLibCheck": true,
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
     "strict": true,
-  }
+    "forceConsistentCasingInFileNames": true,
+    "noFallthroughCasesInSwitch": true,
+    "module": "esnext",
+    "moduleResolution": "node",
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "noEmit": true,
+  },
+  "include": [
+    "src"
+  ]
 }
