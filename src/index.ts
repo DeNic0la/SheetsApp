@@ -8,7 +8,7 @@ import {DataMaster} from "./DataMaster";
 
 function onOpen() {
     let ui = SpreadsheetApp.getUi();
-    ui.createAddonMenu()
+    ui.createMenu("Jungschi Kalender")
         .addItem("Kalender Aktualisieren", "generateCalEvents")
         .addItem("Berechtugungen überprüfen", "checkPermissions")
         .addToUi();
