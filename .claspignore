@@ -5,4 +5,4 @@ SheetsExtension.iml
 package.json
 package-lock.json
 tsconfig.json
-/.idea/*
+.idea/
