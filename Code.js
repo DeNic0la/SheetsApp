@@ -104,7 +104,6 @@ function upsertMeetingCalender(cal,meeting){
 
 function getMeetingContext(meeting){
 
-    meeting
     let context = [
         `Protokoll: ${meeting.mProtocol}`,
         `Lead & Input: ${meeting.mInput}`,
