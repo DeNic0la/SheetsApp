@@ -103,6 +103,8 @@ function upsertMeetingCalender(cal,meeting){
 }
 
 function getMeetingContext(meeting){
+
+    meeting
     let context = [
         `Protokoll: ${meeting.mProtocol}`,
         `Lead & Input: ${meeting.mInput}`,
@@ -246,7 +248,7 @@ function meetingArrayToObject(array){
     startDate.setHours(parseInt(time[0]));
     startDate.setMinutes(parseInt(time[1]));
 
-    if (isNormalMeeting){
+    if (normalMeeting){
         endDate.setHours(MEETING_END_TIME[0]);
         endDate.setMinutes(MEETING_END_TIME[1]);
     }
