@@ -1,7 +1,4 @@
 export class MyLogger{
-    public static logInvalidNamespace(namespace:string) {
-
-    }
 
     public static info(message:string){
         Logger.log(message)
