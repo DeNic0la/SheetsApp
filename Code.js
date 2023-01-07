@@ -104,11 +104,22 @@ function upsertMeetingCalender(cal,meeting){
 
 function getMeetingContext(meeting){
 
-    let context = [
-        `Protokoll: ${meeting.mProtocol}`,
-        `Lead & Input: ${meeting.mInput}`,
-        `Dessert: ${meeting.mDesert}`
-    ];
+    let context = [];
+
+    if (isValidEntry(meeting.mProtocol))
+        context.push(`Protokoll: ${meeting.mProtocol}`);
+
+    if (isValidEntry(meeting.mInput)){
+        const prefix = (meeting.normalMeeting || isSemesterstzung(meeting.meetingType)) ? "Lead & Input" : "Input";
+        context.push(`${prefix}: ${meeting.mInput}`)
+    }
+
+    if (isValidEntry(meeting.mDesert)){
+        const prefix = isMorning(meeting.startDate) ? "Gipfeli" : "Dessert";
+        context.push(`${prefix}: ${meeting.mDesert}`)
+    }
+
+    // Add Noons
     if (meeting.normalMeeting) {
         context.push("");
         context.push("Nachmittage:");
@@ -121,6 +132,40 @@ function getMeetingContext(meeting){
 
     return context.join("\n");
 
+}
+
+function isSemesterstzung(meetingType){
+    let type = meetingType.trim().toLowerCase();
+    return isValidEntry(type) && ( type === "semestersitzung" || isIdenticalWithTolerance(type,"semestersitzung") )
+}
+
+function isIdenticalWithTolerance(str1, str2) {
+    if (str1.length !== str2.length) {
+        return false;
+    }
+
+    let tolerance = 3;
+
+    for (let i = 0; i < str1.length; i++) {
+        if (str1[i] !== str2[i]) {
+            tolerance -= 1;
+            if (tolerance < 0) {
+                return false;
+            }
+        }
+    }
+
+    return true;
+}
+
+
+function isMorning(date) {
+    const hours = date.getHours();
+    return hours >= 0 && hours < 12;
+}
+
+function isValidEntry(name){
+    return isValidString(name) && (name.trim().length > 3);
 }
 function getNoonContext(noon){
     let context = [
