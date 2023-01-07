@@ -15,7 +15,7 @@ export class DataMaster {
                     if (noonInfo) {
                         meetingNoonObjs.push(noonInfo)
                     } else {
-                        MyLogger.warn("Folgender Nachmittag der Sitzung vom " + meeting.date + " wurde nich gefunden:" + meetingNoons[j])
+                        MyLogger.warn("Folgender Nachmittag der Sitzung vom " + meeting.date + " wurde nich gefunden:" + meetingNoons[j]+"- "+JSON.stringify(meeting))
                     }
                 }
                 meetings[i].noons = meetingNoonObjs;
@@ -70,9 +70,30 @@ export class DataMaster {
 
     }
 
-    static findNoonByDate(noons: NoonInfo[], date: NoonDate) {
+    static findNoonByDate(noons: NoonInfo[], date: NoonDate):NoonInfo|undefined {
+        let search = new Date(date).getTime();
+        let darray: string[] = []
+        let a =  noons.find(value => {
+            let val = (typeof value.date === "string" ? new Date(value.date): value.date)
+            if (val.getTime() === search)
+                return true;
+            let d = ""+value.startDate.getDate()+"."+(value.startDate.getMonth()+1)+"."+value.startDate.getFullYear();
+            darray.push(d);
+            return d === date.trim()
+        });
+        MyLogger.info("Equals: "+a+" {"+ JSON.stringify(darray)+"|"+date+"}")
+
+        return a
+        let lookupDateTime = new Date(date).getTime();
+
         return noons.find(value => {
-            return (typeof value.date === "string" ? value.date.trim() : `${value.date.getDate()}.${value.date.getMonth() + 1}.${value.date.getFullYear()}`) === date.trim();
+            let val = (typeof value.date === "string" ? new Date(value.date): value.date)
+            let a = (lookupDateTime === val.getTime())
+            if (a){
+                MyLogger.info("Equals: "+a+" {"+ JSON.stringify(value)+"|"+date+"}")
+
+            }
+            return a;
         });
     }
 }

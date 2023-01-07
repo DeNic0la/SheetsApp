@@ -7,7 +7,7 @@ export class Constant {
     static AREA_NAME_MEETINGS: string;
     static CALENDER_ID: string;
 }
-Constant.TimePlaceRegexp = new RegExp("[ ]{0,2}[0-2]?[0-9]:[0-5]?[0-9][ ]{0,2}[\\/][ ]{0,2}[a-zA-Z]{3,20}[ ]{0,2}");
+Constant.TimePlaceRegexp = new RegExp("[ ]{0,2}[0-2]?[0-9]:[0-5]?[0-9][ ]{0,2}[\\/][ ]{0,2}[a-zA-ZäöüÄÖÜ]{2,20}[ ]{0,2}");
 Constant.MeetingListRegexp = new RegExp("[\.0-9]{3,} ?[\.0-9]*");
 
 Constant.AREA_NAME_NOON = "nachmittage"

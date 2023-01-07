@@ -31,7 +31,7 @@ export class Validator {
     }
 
     static isValidEntryArray(array: any[]): array is ValidEntryFields {
-        if (array.length < 8)
+        if (array.length < 7)
             return false;
 
         return Validator.isValidDateField(array[0]) && Validator.isValidTimePlaceField(array[1])
