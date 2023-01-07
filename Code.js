@@ -1,10 +1,8 @@
-
-
 const AREA_NAME_NOON = "nachmittage"
-const AREA_NAME_MEETINGS= "sitzungen"
+const AREA_NAME_MEETINGS = "sitzungen"
 
-const NOON_END_TIME = [17,15];
-const MEETING_END_TIME = [20,15];
+const NOON_END_TIME = [17, 15];
+const MEETING_END_TIME = [20, 15];
 
 const CALENDER_ID = "hv0f19qpcmhch895bu4akmk6o4@group.calendar.google.com";
 
@@ -12,41 +10,42 @@ const CALENDER_ID = "hv0f19qpcmhch895bu4akmk6o4@group.calendar.google.com";
 function onOpen() {
     let ui = SpreadsheetApp.getUi();
     ui.createAddonMenu()
-        .addItem("Kalender Aktualisieren","generateCalEvents")
-        .addItem("Berechtugungen überprüfen","checkPermissions")
+        .addItem("Kalender Aktualisieren", "generateCalEvents")
+        .addItem("Berechtugungen überprüfen", "checkPermissions")
         .addToUi();
 }
 
-function onInstall(){
+function onInstall() {
     onOpen();
 }
 
-function checkPermissions(){
+function checkPermissions() {
     let name = CalendarApp.getName();
-    if (name.length > 0){
+    if (name.length > 0) {
         SpreadsheetApp.getUi().alert("You have granted all the Required permissions")
     }
 }
 
-function generateCalEvents(){
+function generateCalEvents() {
 
     let cal = CalendarApp.getCalendarById(CALENDER_ID);
     let noons = getNoonsAsObj();
     let mergedMeetings = mergeNoonsToMeetings(noons, getMeetingsAsObj());
 
-    generateNoons(cal,noons);
-    generateMeetings(cal,mergedMeetings);
+    generateNoons(cal, noons);
+    generateMeetings(cal, mergedMeetings);
 }
+
 function generateMeetings(cal, meetings) {
     let rangeByName = SpreadsheetApp.getActiveSpreadsheet().getRangeByName(AREA_NAME_MEETINGS);
 
     for (let i = 0; i < meetings.length; i++) {
         let meeting = meetings[i];
 
-        let id = upsertMeetingCalender(cal,meeting)
+        let id = upsertMeetingCalender(cal, meeting)
 
         // set Calender Id to Sheet
-        rangeByName.getCell((i+1) /*Index + 1 */,8).setValue( id );
+        rangeByName.getCell((i + 1) /*Index + 1 */, 8).setValue(id);
     }
 }
 
@@ -56,23 +55,22 @@ function generateNoons(cal, noons) {
     for (let i = 0; i < noons.length; i++) {
         let noon = noons[i];
 
-        let id = upsertNoonCalender(cal,noon)
+        let id = upsertNoonCalender(cal, noon)
 
         // set Calender Id to Sheet
-        rangeByName.getCell((i+1) /*Index + 1 */,8).setValue( id );
+        rangeByName.getCell((i + 1) /*Index + 1 */, 8).setValue(id);
     }
 }
 
-function upsertNoonCalender(cal,noon){
+function upsertNoonCalender(cal, noon) {
     let title = `Jungschi [ ${noon.place} ]`;
     let context = getNoonContext(noon);
 
     let place = (noon.place.trim() === "MK" ? "Markuskirche Luzern" : noon.place);
     let calEvent = cal.getEventById(noon.calId);
-    if (calEvent === null){
+    if (calEvent === null) {
         calEvent = cal.createEvent(title, noon.startDate, noon.endDate);
-    }
-    else {
+    } else {
         calEvent.setTitle(title);
         calEvent.setTime(noon.startDate, noon.endDate);
     }
@@ -82,17 +80,16 @@ function upsertNoonCalender(cal,noon){
     return calEvent.getId();
 }
 
-function upsertMeetingCalender(cal,meeting){
+function upsertMeetingCalender(cal, meeting) {
     const normalMeeting = meeting.normalMeeting;
-    let title = normalMeeting ? "Jungschisitzung": meeting.meetingType;
+    let title = normalMeeting ? "Jungschisitzung" : meeting.meetingType;
     let context = getMeetingContext(meeting);
 
-    let place = (meeting.place.trim() === "Sekretariat" ? "Sekretariat Markuskirche Luzern" : (meeting.place.trim() === "MK" ? "Markuskirche Luzern" : meeting.place) );
+    let place = (meeting.place.trim() === "Sekretariat" ? "Sekretariat Markuskirche Luzern" : (meeting.place.trim() === "MK" ? "Markuskirche Luzern" : meeting.place));
     let calEvent = cal.getEventById(meeting.calId);
-    if (calEvent === null){
+    if (calEvent === null) {
         calEvent = cal.createEvent(title, meeting.startDate, meeting.endDate);
-    }
-    else {
+    } else {
         calEvent.setTitle(title);
         calEvent.setTime(meeting.startDate, meeting.endDate);
     }
@@ -102,19 +99,19 @@ function upsertMeetingCalender(cal,meeting){
     return calEvent.getId();
 }
 
-function getMeetingContext(meeting){
+function getMeetingContext(meeting) {
 
     let context = [];
 
     if (isValidEntry(meeting.mProtocol))
         context.push(`Protokoll: ${meeting.mProtocol}`);
 
-    if (isValidEntry(meeting.mInput)){
+    if (isValidEntry(meeting.mInput)) {
         const prefix = (meeting.normalMeeting || isSemesterstzung(meeting.meetingType)) ? "Lead & Input" : "Input";
         context.push(`${prefix}: ${meeting.mInput}`)
     }
 
-    if (isValidEntry(meeting.mDesert)){
+    if (isValidEntry(meeting.mDesert)) {
         const prefix = isMorning(meeting.startDate) ? "Gipfeli" : "Dessert";
         context.push(`${prefix}: ${meeting.mDesert}`)
     }
@@ -134,9 +131,9 @@ function getMeetingContext(meeting){
 
 }
 
-function isSemesterstzung(meetingType){
+function isSemesterstzung(meetingType) {
     let type = meetingType.trim().toLowerCase();
-    return isValidEntry(type) && ( type === "semestersitzung" || isIdenticalWithTolerance(type,"semestersitzung") )
+    return isValidEntry(type) && (type === "semestersitzung" || isIdenticalWithTolerance(type, "semestersitzung"))
 }
 
 function isIdenticalWithTolerance(str1, str2) {
@@ -164,34 +161,36 @@ function isMorning(date) {
     return hours >= 0 && hours < 12;
 }
 
-function isValidEntry(name){
+function isValidEntry(name) {
     return isValidString(name) && (name.trim().length > 2);
 }
-function getNoonContext(noon){
+
+function getNoonContext(noon) {
     let context = [
         `Thema: ${noon.name}`,
         `Tagesleitung: ${noon.lead}`
     ]
-    if (isValidString(noon.lunch)){
+    if (isValidString(noon.lunch)) {
         context.push(`Mittagessen: ${noon.lunch}`)
     }
-    if (isValidString(noon.impMessage)){
+    if (isValidString(noon.impMessage)) {
         context.push(noon.impMessage)
     }
     return context.join("\n");
 }
 
-function isValidString(toTest){
+function isValidString(toTest) {
     return (toTest && typeof toTest === "string" && toTest.trim().length > 0)
 }
-function mergeNoonsToMeetings(leNoons,leMeetings){
+
+function mergeNoonsToMeetings(leNoons, leMeetings) {
     let meetings = leMeetings;
     for (let i = 0; i < meetings.length; i++) {
-        if (meetings[i].normalMeeting){
+        if (meetings[i].normalMeeting) {
             let meetingNoons = meetings[i].noons;
             let meetingNoonObjs = [];
             for (let j = 0; j < meetingNoons; j++) {
-                meetingNoonObjs.push(findNoonByDate(leNoons,meetingNoons[j]))
+                meetingNoonObjs.push(findNoonByDate(leNoons, meetingNoons[j]))
             }
             meetings[i].noons = meetingNoonObjs;
         }
@@ -199,16 +198,18 @@ function mergeNoonsToMeetings(leNoons,leMeetings){
     return meetings;
 }
 
-function findNoonByDate(noons,date){
-    return  noons.find(value => {return value.date.trim() === date.trim()});
+function findNoonByDate(noons, date) {
+    return noons.find(value => {
+        return value.date.trim() === date.trim()
+    });
 }
 
-function getMeetingsAsObj(){
+function getMeetingsAsObj() {
     let meetings = getDataByRange(AREA_NAME_MEETINGS);
     let meetingObjs = [];
     for (let i = 0; i < meetings.length; i++) {
         let meeting = meetings[i];
-        if ( isEmpty(meeting[0]) )
+        if (isEmpty(meeting[0]))
             continue;// Skip Empty
 
         meetingObjs.push(meetingArrayToObject(meeting));
@@ -217,12 +218,12 @@ function getMeetingsAsObj(){
 }
 
 
-function getNoonsAsObj(){
+function getNoonsAsObj() {
     let noons = getDataByRange(AREA_NAME_NOON);
     let noonObjs = []
     for (let i = 0; i < noons.length; i++) {
         let noon = noons[i];
-        if ( isEmpty(noon[0]) )
+        if (isEmpty(noon[0]))
             continue;// Skip Empty
 
         noonObjs.push(noonArrayToObject(noon));
@@ -233,13 +234,11 @@ function getNoonsAsObj(){
 function isEmpty(dateField) {
     if (dateField === "Datum")
         return true;
-    if (dateField instanceof Date){
+    if (dateField instanceof Date) {
         return false;
-    }
-    else if (typeof dateField === 'string') {
+    } else if (typeof dateField === 'string') {
         return (dateField.trim().length <= 0)
-    }
-    else {
+    } else {
         return (dateField.toString().trim().length <= 0)
     }
 }
@@ -247,7 +246,8 @@ function isEmpty(dateField) {
 function getDataByRange(rangeName) {
     return SpreadsheetApp.getActiveSpreadsheet().getRangeByName(rangeName).getValues();
 }
-function noonArrayToObject(array){
+
+function noonArrayToObject(array) {
     let date = array[0]
     let timePlace = array[1].split("/") // 00:00 / Place to ["00:00", "Place"]
     let time = timePlace[0].trim().split(":") // " 00:00 " to ["00","00"]
@@ -260,7 +260,7 @@ function noonArrayToObject(array){
     endDate.setHours(NOON_END_TIME[0]);
     endDate.setMinutes(NOON_END_TIME[1]);
 
-    return  {
+    return {
         date,
         startDate,
         endDate,
@@ -276,10 +276,10 @@ function noonArrayToObject(array){
 
 function isNormalMeeting(meetingContext) {
     const regexp = "[\.0-9]{3,} ?[\.0-9]*";
-    return (meetingContext.match(regexp) )
+    return (meetingContext.match(regexp))
 }
 
-function meetingArrayToObject(array){
+function meetingArrayToObject(array) {
     let date = array[0]
     let timePlace = array[1].split("/") // 00:00 / Place to ["00:00", "Place"]
     let time = timePlace[0].trim().split(":") // " 00:00 " to ["00","00"]
@@ -292,17 +292,16 @@ function meetingArrayToObject(array){
     startDate.setHours(parseInt(time[0]));
     startDate.setMinutes(parseInt(time[1]));
 
-    if (normalMeeting){
+    if (normalMeeting) {
         endDate.setHours(MEETING_END_TIME[0]);
         endDate.setMinutes(MEETING_END_TIME[1]);
-    }
-    else {
+    } else {
         endDate.setHours(parseInt(time[0]) + 2);
         endDate.setMinutes(parseInt(time[1]));
     }
 
 
-    let obj =  {
+    let obj = {
         date,
         startDate,
         endDate,
@@ -314,10 +313,9 @@ function meetingArrayToObject(array){
         excused: array[6],
         calId: array[7]
     }
-    if (normalMeeting){
+    if (normalMeeting) {
         obj.noons = meetingContext.split(" ");
-    }
-    else {
+    } else {
         obj.meetingType = meetingContext;
     }
     return obj;
