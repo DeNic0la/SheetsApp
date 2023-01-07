@@ -1,6 +1,9 @@
 {
   "dependencies": {
-    "@types/google-apps-script": "^1.0.56",
     "typescript": "^3.8.2"
+  },
+  "devDependencies": {
+    "@types/google-apps-script-oauth2": "^38.0.0",
+    "@types/google-apps-script": "^1.0.56"
   }
 }
