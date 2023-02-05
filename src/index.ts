@@ -60,14 +60,20 @@ function check_settings() {
 
 }
 const TEST_CALENDAR_NAME = "TestCalendar";
+const TEST_CALENDAR_ID_PROPERTY_KEY = "TestCalendarId"
 function restTestEnviroment() {
-    let old = CalendarSelectorMaster.getCalendarId();
-    if (old){
-        let calendarById = CalendarApp.getCalendarById(old);
-        calendarById.deleteCalendar();
+    let userProperties = PropertiesService.getUserProperties();
+    let testCalId = userProperties.getProperty(TEST_CALENDAR_ID_PROPERTY_KEY);
+    if (testCalId){
+        let oldTestCal = CalendarApp.getCalendarById(testCalId);
+        if (oldTestCal.getName() === TEST_CALENDAR_NAME){
+            oldTestCal.deleteCalendar();
+        }
     }
     let calendar = CalendarApp.createCalendar(TEST_CALENDAR_NAME);
-    CalendarSelectorMaster.selectCalendar(calendar.getId());
+    const testid = calendar.getId()
+    CalendarSelectorMaster.selectCalendar(testid);
+    userProperties.setProperty(TEST_CALENDAR_ID_PROPERTY_KEY,testid)
 }
 
 function generateCalEvents() {
