@@ -1,52 +1,18 @@
-import {MyLogger} from "./Logger";
-
+const CALENDAR_PROPERTY_KEY = "CalendarToWrite";
 export class CalendarSelectorMaster {
     constructor() {
     }
 
-    public getDropdownWithData(data:dropdownOption[]){
-        let temp:any[] = [];
-        const filename = "CalendarDropdown";
-        try{
-            temp[0] = HtmlService.createTemplateFromFile(filename).getRawContent();
-            temp[2] = HtmlService.createTemplateFromFile(filename).getCodeWithComments();
-            temp[1] = HtmlService.createTemplateFromFile(filename).getCode();
-
-        }
-        catch (e) {
-            MyLogger.info(JSON.stringify(e))
-        }
-
-        MyLogger.info("TEMPLATE: "+JSON.stringify(temp))
-
-        MyLogger.showLog()
-
-
-
-        let dropdown = HtmlService.createTemplateFromFile("CalendarDropdown").evaluate();
-/*
-        console.log(dropdown);
-        Logger.log(dropdown)
-        MyLogger.info("TEMPLATE: "+JSON.stringify(dropdown))
-
-        MyLogger.showLog()*/
-
-        return dropdown;
+    private getHTMLForDropDown(){
+        return  HtmlService.createTemplateFromFile("CalendarDropdown").evaluate();
     }
 
     public select_calendar(){
 
-        let allCalendars = CalendarApp.getAllCalendars().map(c => {
-            return {
-                value: c.getId(),
-                key: c.getName()
-            } as dropdownOption;
-        });
-
-        let htmlOutput = this.getDropdownWithData(allCalendars)
+        let htmlOutput = this.getHTMLForDropDown()
             .setSandboxMode(HtmlService.SandboxMode.IFRAME)
-            .setHeight(100)
-            .setWidth(400)
+            .setHeight(200)
+            .setWidth(300)
 
         SpreadsheetApp.getUi()
             .showModalDialog(htmlOutput,'Kalender Wählen')
@@ -54,13 +20,20 @@ export class CalendarSelectorMaster {
     }
 
     static selectCalendar(calId:string){
-        MyLogger.info("CALID: "+calId);
-        MyLogger.showLog()
+        let userProperties = PropertiesService.getUserProperties();
+        userProperties.setProperty(CALENDAR_PROPERTY_KEY,calId);
     }
+
+    static getCalendarId(){
+        let userProperties = PropertiesService.getUserProperties();
+        return userProperties.getProperty(CALENDAR_PROPERTY_KEY);
+    }
+
+
 
 }
 
-function getAllCalendersForHTML(): dropdownOption[] {
+export function getAllCalendersForHTML(): dropdownOption[] {
     return CalendarApp.getAllCalendars().map(c => {
         return {
             value: c.getId(),

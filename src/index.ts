@@ -4,13 +4,16 @@ import {SheetsMaster} from "./SheetsMaster";
 import {CalendarMaster} from "./CalendarMaster";
 import {DataMaster} from "./DataMaster";
 import {Calendar} from "./specific-types";
-import {CalendarSelectorMaster, dropdownOption} from "./CalendarSelectorMaster";
+import {CalendarSelectorMaster, getAllCalendersForHTML} from "./CalendarSelectorMaster";
+
 
 function onOpen() {
     let ui = SpreadsheetApp.getUi();
-    ui.createAddonMenu().addItem("Kalender Aktualisieren", "generateCalEvents")
-        .addItem("Berechtugungen überprüfen", "checkPermissions")
-        .addItem("RUN DEBUG","testing")
+    ui.createAddonMenu().addItem("Kalender Synchronisieren", "generateCalEvents")
+        .addItem("Aktuelle Einstellungen anzeigen", "check_settings")
+        .addItem("Kalender Auswählen", "open_select_calendar")
+        .addSeparator()
+        .addItem("Setup Test calendar","restTestEnviroment")
         .addToUi();
 }
 
@@ -18,24 +21,69 @@ function onOpen() {
 function onInstall() {
     onOpen();
 }
+const CalendarSelectorMain = new CalendarSelectorMaster();
 
-function testing() {
-
-    let a = new CalendarSelectorMaster();
-    a.select_calendar();
-
+function open_select_calendar(){
+    CalendarSelectorMain.select_calendar();
 }
 
-function checkPermissions() {
+function check_settings() {
+    try {
+        let calid = CalendarSelectorMaster.getCalendarId();
+        let text = calid ? "Calendar ID is set " + calid : "Calendar id is not set";
+
+        MyLogger.info(text)
+
+        var authorizationInfo = ScriptApp.getAuthorizationInfo(ScriptApp.AuthMode.LIMITED);
+        MyLogger.info(JSON.stringify(authorizationInfo));
+
+        var authorizationStatus = authorizationInfo.getAuthorizationStatus();
+        MyLogger.info(JSON.stringify(authorizationStatus));
+
+        var authorizationUrl = authorizationInfo.getAuthorizationUrl();
+        MyLogger.info(authorizationUrl);
+    }
+    catch (e) {
+        MyLogger.info(JSON.stringify(e));
+    }
+    MyLogger.showLog();
+
+    let a = confirmCalendarSelection(getCurrentCalendarName());
+    MyLogger.info("Confirmed: "+a);
+
+
     let name = CalendarApp.getName();
     if (name.length > 0) {
         SpreadsheetApp.getUi().alert("Alles ist Startbereit")
     }
+
+
+}
+const TEST_CALENDAR_NAME = "TestCalendar";
+function restTestEnviroment() {
+    let old = CalendarSelectorMaster.getCalendarId();
+    if (old){
+        let calendarById = CalendarApp.getCalendarById(old);
+        calendarById.deleteCalendar();
+    }
+    let calendar = CalendarApp.createCalendar(TEST_CALENDAR_NAME);
+    CalendarSelectorMaster.selectCalendar(calendar.getId());
 }
 
 function generateCalEvents() {
 
-    let cal: Calendar = CalendarApp.getCalendarById(Constant.CALENDER_ID);
+    let calendarId = CalendarSelectorMaster.getCalendarId();
+
+    if (!calendarId){
+        return open_select_calendar();
+    }
+
+    let cal: Calendar = CalendarApp.getCalendarById(calendarId);
+
+    if (cal.getName() !== TEST_CALENDAR_NAME && !confirmCalendarSelection(cal.getName())){
+        return open_select_calendar();
+    }
+
     let noons = SheetsMaster.getNoonsAsObj();
     let mergedMeetings = DataMaster.mergeNoonsToMeetings(noons, SheetsMaster.getMeetingsAsObj());
 
@@ -44,26 +92,21 @@ function generateCalEvents() {
     MyLogger.showLog();
 }
 
-function getAllCalendersAsHTMLOption() {
-    MyLogger.info("CALLED")
-    MyLogger.showLog()
-    let data = CalendarApp.getAllCalendars().map(c => {
-        return {
-            value: c.getId(),
-            key: c.getName()
-        } as dropdownOption;
-    });
-
-    let options:string[] = [];
-
-    for (let i = 0; i < data.length; i++){
-        options.push(`<option value="${data[i].value}">${data[i].key}</option>`)
-    }
-    return data //HtmlService.createHtmlOutput(options.join('\n')).getContent();
-
+function confirmCalendarSelection(calendar_name:string):boolean{
+    let ui = SpreadsheetApp.getUi();
+    let promptResponse = ui.alert("Kalender Bestätigen",`Die aktuellen Aktionen werden mit dem "${calendar_name}" ausgeführt, fortfahren?`, ui.ButtonSet.YES_NO);
+    return (promptResponse == ui.Button.YES)
 }
 
-function selectCalendarCallback(e:any){
-    MyLogger.info("CALID: "+e);
-    MyLogger.showLog()
+function getAllCalendersAsHTMLOption() {
+    return getAllCalendersForHTML();
+}
+
+function selectCalendarCallback(e:string){
+    return CalendarSelectorMaster.selectCalendar(e);
+}
+
+function getCurrentCalendarName() {
+    let calendarId = CalendarSelectorMaster.getCalendarId();
+    return calendarId ? CalendarApp.getCalendarById(calendarId).getName() : "Nicht Gesetzt";
 }

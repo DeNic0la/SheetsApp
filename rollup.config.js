@@ -36,7 +36,9 @@ export default {
             targets: [
                 {src: 'src/html/CalendarDropdown.html', dest: 'build'},
                 {src: 'appsscript.json', dest: 'build'}
-            ]
+            ],
+            verbose: true,
+            overwrite: true
         })
     ],
 };
