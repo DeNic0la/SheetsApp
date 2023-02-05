@@ -34,7 +34,8 @@ export default {
         babel({ extensions, babelHelpers: "runtime" }),
         copy({
             targets: [
-                {src: 'src/html/CalendarDropdown.html', dest: 'build'}
+                {src: 'src/html/CalendarDropdown.html', dest: 'build'},
+                {src: 'appsscript.json', dest: 'build'}
             ]
         })
     ],

@@ -1,29 +1,37 @@
-import {CalendarMaster} from "./CalendarMaster";
 import {MyLogger} from "./Logger";
 
 export class CalendarSelectorMaster {
-    private template: GoogleAppsScript.HTML.HtmlTemplate ;
     constructor() {
-        this.template = HtmlService.createTemplateFromFile("build/CalendarDropdown.html");
     }
 
     public getDropdownWithData(data:dropdownOption[]){
-        let options:string[] = [];
+        let temp:any[] = [];
+        const filename = "CalendarDropdown";
+        try{
+            temp[0] = HtmlService.createTemplateFromFile(filename).getRawContent();
+            temp[2] = HtmlService.createTemplateFromFile(filename).getCodeWithComments();
+            temp[1] = HtmlService.createTemplateFromFile(filename).getCode();
 
-        for (let i = 0; i < data.length; i++){
-            options.push(`<option value="${data[i].value}">${data[i].key}</option>`)
+        }
+        catch (e) {
+            MyLogger.info(JSON.stringify(e))
         }
 
-        let optionsAsHtml = HtmlService.createHtmlOutput(options.join('\n'));
+        MyLogger.info("TEMPLATE: "+JSON.stringify(temp))
 
-        let dropdown = this.template;
-        dropdown.data = data;
-
-        let dd = dropdown.evaluate();
-        MyLogger.info(optionsAsHtml.getContent())
-        MyLogger.info(dd.getContent())
         MyLogger.showLog()
-        return dd;
+
+
+
+        let dropdown = HtmlService.createTemplateFromFile("CalendarDropdown").evaluate();
+/*
+        console.log(dropdown);
+        Logger.log(dropdown)
+        MyLogger.info("TEMPLATE: "+JSON.stringify(dropdown))
+
+        MyLogger.showLog()*/
+
+        return dropdown;
     }
 
     public select_calendar(){
@@ -50,6 +58,15 @@ export class CalendarSelectorMaster {
         MyLogger.showLog()
     }
 
+}
+
+function getAllCalendersForHTML(): dropdownOption[] {
+    return CalendarApp.getAllCalendars().map(c => {
+        return {
+            value: c.getId(),
+            key: c.getName()
+        } as dropdownOption;
+    });
 }
 
 

@@ -18,9 +18,12 @@
             .selectCalendarCallback(choice);
     }
 
+    function fillSelect(){}
+
     function setup() {
         const button = document.getElementById('submitbutton');
         button.addEventListener("click", submit)
+
     }
 </script>
 
@@ -31,7 +34,7 @@
     <select id="choice">
         <? if(Object.prototype.toString.call(data) === '[object Array]') { ?>
         <? for (var i = 0; i < data.length; i++) {?>
-        <option value="<?= data[i].value ?>"> <?= data[i].key ?> </option>
+        <option value="<?!= data[i].value ?>"> <?!= data[i].key ?> </option>
         <? } ?>
         <option value="a">b</option>
 
@@ -39,6 +42,7 @@
     </select>
     <button id="submitbutton">Bestätigen</button>
 </form>
+<script src="https://code.jquery.com/jquery-3.6.3.min.js"></script>
 </body>
 
 </html>
