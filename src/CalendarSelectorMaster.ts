@@ -11,8 +11,8 @@ export class CalendarSelectorMaster {
 
         let htmlOutput = this.getHTMLForDropDown()
             .setSandboxMode(HtmlService.SandboxMode.IFRAME)
-            .setHeight(200)
-            .setWidth(300)
+            .setHeight(300)
+            .setWidth(500)
 
         SpreadsheetApp.getUi()
             .showModalDialog(htmlOutput,'Kalender Wählen')
