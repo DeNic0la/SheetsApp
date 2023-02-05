@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <base target="_top">
+</head>
+
+<script>
+    function onSuccess() {
+        google.script.host.close();
+    }
+
+    function submit() {
+        const choice = document.getElementById('choice').value;
+
+        google.script.run
+            .withSuccessHandler(onSuccess)
+            .writeChoice(choice);
+    }
+
+    function setup() {
+        const button = document.getElementById('submitbutton');
+        button.addEventListener("click", submit)
+    }
+</script>
+
+<body onload="setup()">
+<p>
+    Wähle einen Kalender
+</p>
+<form>
+    <select id="choice">
+        <? for (var i = 0; i < options.length; i++) { ?>
+        <option value="<?= options[i].value ?>"><?= options[i].key ?></option>
+        <? } ?>
+    </select>
+    <button id="submitbutton">Bestätigen</button>
+</form>
+</body>
+
+</html>

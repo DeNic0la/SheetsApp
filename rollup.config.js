@@ -2,6 +2,8 @@ import { babel } from "@rollup/plugin-babel";
 import { nodeResolve } from "@rollup/plugin-node-resolve";
 
 const extensions = [".ts", ".js"];
+let static_files = require('rollup-plugin-static-files');
+
 
 const preventTreeShakingPlugin = () => {
     return {
@@ -29,5 +31,8 @@ export default {
             mainFields: ['jsnext:main', 'main']
         }),
         babel({ extensions, babelHelpers: "runtime" }),
+        static_files({
+            include: ['src/html'],
+        })
     ],
 };

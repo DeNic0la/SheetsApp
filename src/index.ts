@@ -9,12 +9,27 @@ function onOpen() {
     let ui = SpreadsheetApp.getUi();
     ui.createAddonMenu().addItem("Kalender Aktualisieren", "generateCalEvents")
         .addItem("Berechtugungen überprüfen", "checkPermissions")
+        .addItem("RUN DEBUG","testing")
         .addToUi();
 }
 
 
 function onInstall() {
     onOpen();
+}
+
+function testing() {
+    let active = Session.getActiveUser().getEmail()
+    let effective = Session.getEffectiveUser().getEmail();
+
+    let cal: Calendar = CalendarApp.getCalendarById(Constant.CALENDER_ID);
+
+    cal.getName()
+    CalendarMaster.selectCalendar();
+
+    MyLogger.info("ACTIVE: "+ active)
+    MyLogger.info("EFFECTIVE: "+ effective)
+    MyLogger.showLog()
 }
 
 function checkPermissions() {

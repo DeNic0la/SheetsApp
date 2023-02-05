@@ -1,6 +1,8 @@
 import {Calendar, CalendarEvent, MeetingInfo, NoonInfo} from "./specific-types";
 import {Constant} from "./Constant";
 import {DataMaster} from "./DataMaster";
+import ButtonSet = GoogleAppsScript.Base.ButtonSet;
+import {MyLogger} from "./Logger";
 
 export class CalendarMaster {
     static generateMeetings(cal: Calendar, meetings: MeetingInfo[]) {
@@ -76,5 +78,18 @@ export class CalendarMaster {
         calEvent.setLocation(place);
 
         return calEvent.getId();
+    }
+
+    static get calendar(){
+        return CalendarApp.getCalendarById(Constant.CALENDER_ID);
+    }
+
+    static selectCalendar(){
+        let ui = SpreadsheetApp.getUi();
+        let resp = ui.prompt('TEST','Thi is se Prompt',ButtonSet.YES_NO_CANCEL);
+        MyLogger.info("RESPONSE: " + resp.getResponseText())
+        MyLogger.info("Button: " + resp.getSelectedButton().toString())
+
+
     }
 }
