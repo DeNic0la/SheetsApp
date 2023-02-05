@@ -1,8 +1,9 @@
 import { babel } from "@rollup/plugin-babel";
 import { nodeResolve } from "@rollup/plugin-node-resolve";
+import copy from 'rollup-plugin-copy'
+
 
 const extensions = [".ts", ".js"];
-let static_files = require('rollup-plugin-static-files');
 
 
 const preventTreeShakingPlugin = () => {
@@ -31,8 +32,10 @@ export default {
             mainFields: ['jsnext:main', 'main']
         }),
         babel({ extensions, babelHelpers: "runtime" }),
-        static_files({
-            include: ['src/html'],
+        copy({
+            targets: [
+                {src: 'src/html/CalendarDropdown.html', dest: 'build'}
+            ]
         })
     ],
 };

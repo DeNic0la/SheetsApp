@@ -15,7 +15,7 @@
 
         google.script.run
             .withSuccessHandler(onSuccess)
-            .writeChoice(choice);
+            .selectCalendarCallback(choice);
     }
 
     function setup() {
@@ -25,14 +25,17 @@
 </script>
 
 <body onload="setup()">
-<p>
-    Wähle einen Kalender
-</p>
+
 <form>
+    <? var data = getAllCalendersAsHTMLOption(); ?>
     <select id="choice">
-        <? for (var i = 0; i < options.length; i++) { ?>
-        <option value="<?= options[i].value ?>"><?= options[i].key ?></option>
+        <? if(Object.prototype.toString.call(data) === '[object Array]') { ?>
+        <? for (var i = 0; i < data.length; i++) {?>
+        <option value="<?= data[i].value ?>"> <?= data[i].key ?> </option>
         <? } ?>
+        <option value="a">b</option>
+
+
     </select>
     <button id="submitbutton">Bestätigen</button>
 </form>

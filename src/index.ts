@@ -4,6 +4,7 @@ import {SheetsMaster} from "./SheetsMaster";
 import {CalendarMaster} from "./CalendarMaster";
 import {DataMaster} from "./DataMaster";
 import {Calendar} from "./specific-types";
+import {CalendarSelectorMaster, dropdownOption} from "./CalendarSelectorMaster";
 
 function onOpen() {
     let ui = SpreadsheetApp.getUi();
@@ -19,17 +20,10 @@ function onInstall() {
 }
 
 function testing() {
-    let active = Session.getActiveUser().getEmail()
-    let effective = Session.getEffectiveUser().getEmail();
 
-    let cal: Calendar = CalendarApp.getCalendarById(Constant.CALENDER_ID);
+    let a = new CalendarSelectorMaster();
+    a.select_calendar();
 
-    cal.getName()
-    CalendarMaster.selectCalendar();
-
-    MyLogger.info("ACTIVE: "+ active)
-    MyLogger.info("EFFECTIVE: "+ effective)
-    MyLogger.showLog()
 }
 
 function checkPermissions() {
@@ -50,3 +44,26 @@ function generateCalEvents() {
     MyLogger.showLog();
 }
 
+function getAllCalendersAsHTMLOption() {
+    MyLogger.info("CALLED")
+    MyLogger.showLog()
+    let data = CalendarApp.getAllCalendars().map(c => {
+        return {
+            value: c.getId(),
+            key: c.getName()
+        } as dropdownOption;
+    });
+
+    let options:string[] = [];
+
+    for (let i = 0; i < data.length; i++){
+        options.push(`<option value="${data[i].value}">${data[i].key}</option>`)
+    }
+    return data //HtmlService.createHtmlOutput(options.join('\n')).getContent();
+
+}
+
+function selectCalendarCallback(e:any){
+    MyLogger.info("CALID: "+e);
+    MyLogger.showLog()
+}
