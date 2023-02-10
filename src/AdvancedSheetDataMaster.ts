@@ -61,11 +61,16 @@ export class AdvancedSheetDataMaster {
 
     }
     static guessNamedRange(){
+
+
+        let ui = SpreadsheetApp.getUi();
+        let resp = ui.prompt("Bereich auswählen","Enter:",ui.ButtonSet.OK_CANCEL)
         const noonsHeader = this.getHeaderRow("NACHMITTAGE");
         const noonRange = this.getRangeForHeaderRow(noonsHeader);
         let a1Notation = noonRange?.getA1Notation();
         MyLogger.info("ANOT:    "+a1Notation)
         noonRange?.activate()
+        MyLogger.info("Response Text:" + resp.getResponseText())
 
 
 
