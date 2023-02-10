@@ -1,11 +1,9 @@
 <!DOCTYPE html>
 <html>
-
 <head>
     <base target="_top">
     <?!= include('BootstrapImport'); ?>
 </head>
-
 
 <body onload="setup()">
 
@@ -13,9 +11,7 @@
     <div class="d-flex justify-content-center container-fluid mt-5">
         <div>
             <div class="input-group input-group-lg mb-3">
-                <select id="choice" class="form-control-lg">
-
-                    <option value="<?!= data[i].value ?>"> <?!= data[i].key ?> </option>
+                <select id="choice" class="form-select form-select-lg">
                 </select>
 
                 <div class="input-group-append">
@@ -23,11 +19,10 @@
                 </div>
             </div>
         </div>
-
     </div>
     <div class="alert alert-success" role="alert">
-        <h4 class="alert-heading">Aktueller Kalender:</h4>
-        <p>Der Aktuelle ausgewählte Kalender ist <strong><?= getCurrentCalendarName(); ?></strong></p>
+        <h4 class="alert-heading"></h4>
+        <p></p>
     </div>
 </form>
 
@@ -55,24 +50,38 @@
         $('#submitbutton').on('click', submit);
 
         let data = [
-            {key: "test",value:"Test-Display"}
+            {key: "test",value:"Test-Display"},
+            {key: "test2",value:"Test-Display2"},
+            {key: "test3",value:"Test-Display3"}
         ]
+        let context = {
+            data: data,
+            selected: 'test2'
+        }
 
+        buildForm(context)
+
+
+    }
+
+    function buildForm(context){
+
+        let data = context.data;
         $.each(data, function (key,value){
             $('#choice')
                 .append($("<option></option>")
                     .attr("value", key)
-                    .text(value));
+                    .text(value))
+                    .addClass(
+                        (context.selected === key) ?
+                            "fw-bold" : ""
+                    )
         })
 
-        //$("#choice select").val("ValToSelect-TODO").change();
-
-
+        $("#choice select").val(context.selected).change();
     }
 
-    function buildForm(data){
 
-    }
 </script>
 
 </body>
