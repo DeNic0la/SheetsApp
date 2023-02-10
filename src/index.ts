@@ -144,3 +144,8 @@ function getCurrentCalendarName() {
     let calendarId = CalendarSelectorMaster.getCalendarId();
     return calendarId ? CalendarApp.getCalendarById(calendarId).getName() : "Nicht Gesetzt";
 }
+
+function include(filename: string) {
+    return HtmlService.createHtmlOutputFromFile(filename)
+        .getContent();
+}
