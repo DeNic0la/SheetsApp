@@ -5,6 +5,9 @@ import {CalendarMaster} from "./CalendarMaster";
 import {DataMaster} from "./DataMaster";
 import {Calendar} from "./specific-types";
 import {CalendarSelectorMaster, getAllCalendersForHTML} from "./CalendarSelectorMaster";
+import {displayError, displayNoLockError} from "./Util";
+import {AdvancedSheetDataMaster} from "./AdvancedSheetDataMaster";
+
 
 
 function onOpen() {
@@ -14,9 +17,11 @@ function onOpen() {
         .addItem("Kalender Auswählen", "open_select_calendar")
         .addSeparator()
         .addItem("Setup Test calendar","restTestEnviroment")
+        .addItem("Named Ranges","namedRangeBuilder")
         .addToUi();
 }
 
+const DEFAULT_LOCK_TIMEOUT = 1000;
 
 function onInstall() {
     onOpen();
@@ -76,6 +81,15 @@ function restTestEnviroment() {
     userProperties.setProperty(TEST_CALENDAR_ID_PROPERTY_KEY,testid)
 }
 
+function validate_dates(){
+
+}
+
+function namedRangeBuilder(){
+    return AdvancedSheetDataMaster.guessNamedRange()
+}
+
+
 function generateCalEvents() {
 
     let calendarId = CalendarSelectorMaster.getCalendarId();
@@ -90,12 +104,26 @@ function generateCalEvents() {
         return open_select_calendar();
     }
 
-    let noons = SheetsMaster.getNoonsAsObj();
-    let mergedMeetings = DataMaster.mergeNoonsToMeetings(noons, SheetsMaster.getMeetingsAsObj());
+    let scriptLock = LockService.getScriptLock();
+    if (!scriptLock.tryLock(DEFAULT_LOCK_TIMEOUT)){// No Lock
+        return displayNoLockError();
+    }
+    try {
 
-    CalendarMaster.generateNoons(cal, noons);
-    CalendarMaster.generateMeetings(cal, mergedMeetings);
-    MyLogger.showLog();
+        let noons = SheetsMaster.getNoonsAsObj();
+        let mergedMeetings = DataMaster.mergeNoonsToMeetings(noons, SheetsMaster.getMeetingsAsObj());
+
+        CalendarMaster.generateNoons(cal, noons);
+        CalendarMaster.generateMeetings(cal, mergedMeetings);
+    }
+    catch (e){
+        return displayError(e);
+    }
+    finally {
+        scriptLock.releaseLock();
+        MyLogger.showLog();
+    }
+
 }
 
 function confirmCalendarSelection(calendar_name:string):boolean{
