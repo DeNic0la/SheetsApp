@@ -5,6 +5,9 @@ export class Constant {
     static NOON_END_TIME: number[];
     static MEETING_END_TIME: number[];
     static AREA_NAME_MEETINGS: string;
+    static PROPERTY_NAME_UI_DATA: string;
+    static PROPERTY_NAME_CALLBACK_DATA: string;
+
 }
 Constant.TimePlaceRegexp = new RegExp("[ ]{0,2}[0-2]?[0-9]:[0-5]?[0-9][ ]{0,2}[\\/][ ]{0,2}[a-zA-ZäöüÄÖÜ]{2,20}[ ]{0,2}");
 Constant.MeetingListRegexp = new RegExp("[\.0-9]{3,} ?[\.0-9]*");
@@ -14,5 +17,6 @@ Constant.AREA_NAME_MEETINGS = "sitzungen"
 
 Constant.NOON_END_TIME = [17, 15];
 Constant.MEETING_END_TIME = [20, 15];
+Constant.PROPERTY_NAME_UI_DATA = "UiData"
+Constant.PROPERTY_NAME_CALLBACK_DATA = "CallbackData"
 
-//Constant.CALENDER_ID = "hv0f19qpcmhch895bu4akmk6o4@group.calendar.google.com";

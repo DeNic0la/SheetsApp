@@ -1,35 +1,30 @@
+import {CustomPicker, PickerContext} from "./CustomPicker";
+
 const CALENDAR_PROPERTY_KEY = "CalendarToWrite";
-export class CalendarSelectorMaster {
-    constructor() {
+export function selectCalendar(calId:string){
+    let userProperties = PropertiesService.getUserProperties();
+    userProperties.setProperty(CALENDAR_PROPERTY_KEY,calId);
+}
+export function getCalendarId(){
+    let userProperties = PropertiesService.getUserProperties();
+    return userProperties.getProperty(CALENDAR_PROPERTY_KEY);
+}
+export function getCurrentCalendarName() {
+    let calendarId = getCalendarId();
+    return calendarId ? CalendarApp.getCalendarById(calendarId).getName() : "Nicht Gesetzt";
+}
+
+export function call_custom_picker_for_cal(){
+    let context:PickerContext = {
+        data: getAllCalendersForHTML(),
+        current: getCalendarId(),
+        propertyName: CALENDAR_PROPERTY_KEY,
+        propertyType: "User"
     }
 
-    private getHTMLForDropDown(){
-        return  HtmlService.createTemplateFromFile("CalendarDropdown").evaluate();
-    }
+    let picker = new CustomPicker(context)
 
-    public select_calendar(){
-
-        let htmlOutput = this.getHTMLForDropDown()
-            .setSandboxMode(HtmlService.SandboxMode.IFRAME)
-            .setHeight(300)
-            .setWidth(500)
-
-        SpreadsheetApp.getUi()
-            .showModalDialog(htmlOutput,'Kalender Wählen')
-
-    }
-
-    static selectCalendar(calId:string){
-        let userProperties = PropertiesService.getUserProperties();
-        userProperties.setProperty(CALENDAR_PROPERTY_KEY,calId);
-    }
-
-    static getCalendarId(){
-        let userProperties = PropertiesService.getUserProperties();
-        return userProperties.getProperty(CALENDAR_PROPERTY_KEY);
-    }
-
-
+    picker.show("Wähle einen Kalender");
 
 }
 

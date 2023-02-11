@@ -11,26 +11,16 @@
     <div class="d-flex justify-content-center container-fluid mt-5">
         <div>
             <div class="input-group input-group-lg mb-3">
-                <select id="choice" class="form-select form-select-lg">
-                </select>
-
-                <div class="input-group-append">
-                    <button type="button" class="btn btn-lg btn-outline-success" id="submitbutton">Bestätigen</button>
-                </div>
+                <select id="choice" class="form-select form-select-lg"></select>
+                <button type="button" class="btn btn-lg btn-outline-success" id="submitbutton">Bestätigen</button>
             </div>
         </div>
-    </div>
-    <div class="alert alert-success" role="alert">
-        <h4 class="alert-heading"></h4>
-        <p></p>
     </div>
 </form>
 
 
 <?!= include('BootstrapScriptImport'); ?>
-
 <?!= include('JQueryImport'); ?>
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.3/jquery.min.js"></script>
 
 <script>
 
@@ -41,44 +31,47 @@
     function submit() {
         const choice = $('#choice').val()
 
+        console.log("Submitting Value: "+choice);
+
         google.script.run
             .withSuccessHandler(close)
-            .selectCalendarCallback(choice);
+            .withFailureHandler(console.log)
+            .submitInputCallback(choice);
     }
 
     function setup() {
         $('#submitbutton').on('click', submit);
 
-        let data = [
-            {key: "test",value:"Test-Display"},
-            {key: "test2",value:"Test-Display2"},
-            {key: "test3",value:"Test-Display3"}
-        ]
-        let context = {
-            data: data,
-            selected: 'test2'
-        }
-
-        buildForm(context)
+        google.script.run
+            .withSuccessHandler(buildForm)
+            .withFailureHandler(console.log)
+            .getDataFromProp();
 
 
     }
 
-    function buildForm(context){
+    function buildForm(jsonString){
+        console.log(jsonString)
+
+        let context = JSON.parse(jsonString);
 
         let data = context.data;
-        $.each(data, function (key,value){
-            $('#choice')
-                .append($("<option></option>")
-                    .attr("value", key)
-                    .text(value))
+        var $dropdown = $('#choice')
+
+        $.each(data, function (){
+            $dropdown.append($("<option />")
+                    .val(this.value)
+                    .text(this.key))
                     .addClass(
-                        (context.selected === key) ?
-                            "fw-bold" : ""
+                        styleClass(context.current, this.value)
                     )
         })
 
-        $("#choice select").val(context.selected).change();
+        $("#choice").val(context.current).change();
+    }
+
+    function styleClass(c,v){
+        return (c === v) ? "fw-bold" : ""
     }
 
 
