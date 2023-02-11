@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <base target="_top">
+    <?!= include('BootstrapImport'); ?>
+</head>
+
+<body onload="setup()">
+
+<form>
+    <div class="d-flex justify-content-center container-fluid mt-5">
+        <div>
+            <div class="input-group input-group-lg mb-3">
+                <select id="choice" class="form-select form-select-lg"></select>
+                <button type="button" class="btn btn-lg btn-outline-success" id="submitbutton">Bestätigen</button>
+            </div>
+        </div>
+    </div>
+</form>
+
+
+<?!= include('BootstrapScriptImport'); ?>
+<?!= include('JQueryImport'); ?>
+
+<script>
+
+    function close() {
+        google.script.host.close();
+    }
+
+    function submit() {
+        const choice = $('#choice').val()
+
+        console.log("Submitting Value: "+choice);
+
+        google.script.run
+            .withSuccessHandler(close)
+            .withFailureHandler(console.log)
+            .submitInputCallback(choice);
+    }
+
+    function setup() {
+        $('#submitbutton').on('click', submit);
+
+        google.script.run
+            .withSuccessHandler(buildForm)
+            .withFailureHandler(console.log)
+            .getDataFromProp();
+
+
+    }
+
+    function buildForm(jsonString){
+        console.log(jsonString)
+
+        let context = JSON.parse(jsonString);
+
+        let data = context.data;
+        var $dropdown = $('#choice')
+
+        $.each(data, function (){
+            $dropdown.append($("<option />")
+                    .val(this.value)
+                    .text(this.key))
+                    .addClass(
+                        styleClass(context.current, this.value)
+                    )
+        })
+
+        $("#choice").val(context.current).change();
+    }
+
+    function styleClass(c,v){
+        return (c === v) ? "fw-bold" : ""
+    }
+
+
+</script>
+
+</body>
+
+</html>

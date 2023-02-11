@@ -1,7 +1,9 @@
 import {MyLogger} from "./Logger";
 
-const NOONS_TITLE = "NACHMITTAGE"
-const MEETINGS_TITLE = "SITZUNGEN"
+export const NOONS_TITLE = "NACHMITTAGE"
+export const MEETINGS_TITLE = "SITZUNGEN"
+export const LAGER = "LAGER"
+
 export type Range = GoogleAppsScript.Spreadsheet.Range;
 export type Direction = GoogleAppsScript.Spreadsheet.Direction;
 export class AdvancedSheetDataMaster {
@@ -19,6 +21,30 @@ export class AdvancedSheetDataMaster {
 
         let numColumns = (spreadsheet.getActiveSheet().getLastColumn() + 1) - datum.getColumn();
         return spreadsheet.getActiveSheet().getRange(datum.getRow(), datum.getColumn(), 1, numColumns)
+
+    }
+
+    static getHeaderRowLager(){
+        let spreadsheet = SpreadsheetApp.getActiveSpreadsheet();
+        const startRange = this.getRangeByContent(LAGER)
+        if (!startRange)
+            return undefined;
+
+        const datum = this.findNextFieldWithText(startRange,SpreadsheetApp.Direction.DOWN)
+
+        if (!datum)
+            return undefined;
+
+        let nextValue: Range = datum;
+        let col = 0;
+
+        while (nextValue.getDisplayValue().trim().length !== 0){
+            col++;
+            nextValue = nextValue.getNextDataCell(SpreadsheetApp.Direction.NEXT);
+        }
+
+        return spreadsheet.getActiveSheet().getRange(datum.getRow(), datum.getColumn(), 1, col)
+
 
     }
     static findNextFieldWithText(range:Range, way: Direction){
@@ -60,21 +86,15 @@ export class AdvancedSheetDataMaster {
         return SpreadsheetApp.getActiveSpreadsheet().createTextFinder(title).matchCase(true).matchEntireCell(true).findNext()
 
     }
-    static guessNamedRange(){
 
-
-        let ui = SpreadsheetApp.getUi();
-        let resp = ui.prompt("Bereich auswählen","Enter:",ui.ButtonSet.OK_CANCEL)
-        const noonsHeader = this.getHeaderRow("NACHMITTAGE");
-        const noonRange = this.getRangeForHeaderRow(noonsHeader);
-        let a1Notation = noonRange?.getA1Notation();
-        MyLogger.info("ANOT:    "+a1Notation)
-        noonRange?.activate()
-        MyLogger.info("Response Text:" + resp.getResponseText())
-
-
-
-        MyLogger.showLog() //A1:H4:H31
+    static getNoonRange(){
+        return this.getRangeForHeaderRow(this.getHeaderRow(NOONS_TITLE))
+    }
+    static getMeetingRange(){
+        return this.getRangeForHeaderRow(this.getHeaderRow(MEETINGS_TITLE))
+    }
+    static getLagerRange(){
+        return this.getRangeForHeaderRow(this.getHeaderRowLager())
     }
 
     static getRangeForHeaderRow(headerRow:Range|undefined){
@@ -82,7 +102,6 @@ export class AdvancedSheetDataMaster {
             let lastRowWithContent = this.getLastRowWithContent(headerRow);
             if (lastRowWithContent){
                 let data = {row: headerRow.getRow(),col: headerRow.getColumn(),numRows: ((lastRowWithContent.getLastRow()+1) - headerRow.getRow()), numCols: ((lastRowWithContent.getLastColumn()+1) - headerRow.getColumn()) }
-                MyLogger.info(JSON.stringify(data));
                 return SpreadsheetApp.getActiveSheet().getRange(
                     headerRow.getRow(),
                     headerRow.getColumn(),
