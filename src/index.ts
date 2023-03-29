@@ -13,9 +13,10 @@ import {
 import {displayError, displayNoLockError} from "./Util";
 import {AdvancedSheetDataMaster} from "./AdvancedSheetDataMaster";
 import {submitEventCallback} from "./CustomPicker";
-import {buildUI} from "./UiBuilder";
+import {buildUI } from "./UiBuilder";
 import {call_debug_state_picker, getDebugState, getDebugStateProp} from "./DebugState";
 import {FormatMaster} from "./FormatMaster";
+import {UiMaster} from "./UiMaster";
 
 function main_call_debug_state_picker() {
     call_debug_state_picker();
@@ -97,7 +98,7 @@ function generateCalEvents() {
     let calendarId = getCalendarId();
 
     if (!calendarId){
-        SpreadsheetApp.getUi().alert("Kalender wurde nicht gesetzt")
+        UiMaster.showMessageDialog(`Es wurden kein Kalender gesetzt. Vorgang wird abgebrochen`)
         return;
     }
 
@@ -109,21 +110,35 @@ function generateCalEvents() {
     }*/
 
 
-    try {
+    //try {
+        console.time("NoonFetch")
 
         let noons = SheetsMaster.getNoonsAsObj();
+
+        console.timeEnd("NoonFetch")
+        console.time("MeetingFetch")
+
         let mergedMeetings = DataMaster.mergeNoonsToMeetings(noons, SheetsMaster.getMeetingsAsObj());
+        console.timeEnd("MeetingFetch")
+
+        console.time("GenNoons")
 
         CalendarMaster.generateNoons(cal, noons);
-        CalendarMaster.generateMeetings(cal, mergedMeetings);
-    }
+    console.timeEnd("GenNoons")
+    console.time("GenMeetings")
+
+    CalendarMaster.generateMeetings(cal, mergedMeetings);
+    console.timeEnd("GenMeetings")
+    console.time("END")
+
+    /*}
     catch (e){
         displayError(e);
         return;
-    }
-
+    }*/
+    SpreadsheetApp.flush();
     MyLogger.showLog();
-    SpreadsheetApp.getUi().alert("Done with se stuff")
+    console.timeEnd("END")
 
 
 }

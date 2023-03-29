@@ -12,7 +12,7 @@ export class SheetsMaster {
     static getNoonsAsObj(): NoonInfo[] {
         let noons = DataRangeManger.getDataByRange(AREA_NAME_NOON);
         let noonObjs = [];
-        // First row is the Header Row, therfore start at 1
+        // First row is the Header Row, therefore start at 1
         for (let i = 1; i < noons.length; i++) {
             let noon = noons[i];
 
@@ -20,12 +20,10 @@ export class SheetsMaster {
                 noonObjs.push(SheetsMaster.noonArrayToObject(noon,i));
 
             } else {
-                SpreadsheetApp.getUi().alert("Nachmittag Nr:" + (i + 1) + " wurde übersprungen")
-
+//                UiMaster.showMessageDialog("Nachmittag Nr:" + (i) + " wurde übersprungen")
+                MyLogger.info("Nachmittag Nr:" + (i) + " wurde übersprungen")
                 HighlightMaster.highlightValidationErrorInNoon(i,noon)
-                MyLogger.info("Nachmittag Nr:" + (i + 1) + " wurde übersprungen")
             }
-
 
         }
         return noonObjs;
@@ -111,8 +109,10 @@ export class SheetsMaster {
             if (Validator.isValidMeetingEntryFields(meeting)) {
                 meetingObjs.push(SheetsMaster.meetingArrayToObject(meeting,i));
             } else {
+ //               UiMaster.showMessageDialog("Sitzung Nr:" + (i) + " wurde übersprungen")
+                MyLogger.info("Sitzung Nr:" + (i) + " wurde übersprungen")
+
                 HighlightMaster.highlightValidationErrorInMeeting(i,meeting)
-                MyLogger.info("Sitzung Nr:" + (i + 1) + " wurde übersprungen")
             }
         }
         return meetingObjs;

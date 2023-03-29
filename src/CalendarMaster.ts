@@ -1,7 +1,6 @@
 import {Calendar, CalendarEvent, MeetingInfo, NoonInfo} from "./specific-types";
 import {Constant} from "./Constant";
 import {DataMaster} from "./DataMaster";
-import {MyLogger} from "./Logger";
 
 export class CalendarMaster {
     static generateMeetings(cal: Calendar, meetings: MeetingInfo[]) {
@@ -30,7 +29,7 @@ export class CalendarMaster {
             let id = CalendarMaster.upsertNoonCalender(cal, noon)
 
             // set Calender Id to Sheet
-            rangeByName.getCell((noon.indexInNamedRange + 1) /*Index + 1 */, 8).setValue(id);
+            rangeByName.getCell((noon.indexInNamedRange + 1) /*Index + 1 */, 8).setValue(id)
         }
     }
 

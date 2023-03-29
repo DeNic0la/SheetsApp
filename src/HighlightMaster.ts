@@ -1,7 +1,6 @@
 import {Constant} from "./Constant";
 import { Range } from "./specific-types";
 import {Validator} from "./Validator";
-import {MyLogger} from "./Logger";
 
 const HEX_VALUE_RED = "#fa1418"
 export class HighlightMaster {
@@ -33,9 +32,12 @@ export class HighlightMaster {
     }
 
     private static highlightField(index: number, fieldIndex: number, range: Range) {
-        SpreadsheetApp.getUi().alert(`Markiere Feld mit index: ${index} und fieldIndex ${fieldIndex}`)
-
+        range.getCell(
+            (index + 1), (fieldIndex + 1)
+        ).setBackground(HEX_VALUE_RED);
+        SpreadsheetApp.flush();
         //MyLogger.info(`Markiere Feld mit index: ${index} und fieldIndex ${fieldIndex}`)
+        /*
         try{
             range.getCell(
                 (index + 1), (fieldIndex + 1)
@@ -43,10 +45,8 @@ export class HighlightMaster {
         }
         catch (e) {
             SpreadsheetApp.getUi().alert("Hat Nicht geklappt")
-            range.getCell(
-                (index + 1), (fieldIndex + 1)
-            ).setBackground(HEX_VALUE_RED);
-        }
+
+        }*/
 
 
 
