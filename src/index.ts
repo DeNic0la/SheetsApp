@@ -97,19 +97,18 @@ function generateCalEvents() {
     let calendarId = getCalendarId();
 
     if (!calendarId){
+        SpreadsheetApp.getUi().alert("Kalender wurde nicht gesetzt")
         return;
     }
 
     let cal: Calendar = CalendarApp.getCalendarById(calendarId);
 
-    if (cal.getName() !== TEST_CALENDAR_NAME && !confirmCalendarSelection(cal.getName())){
+    // Prompt the User to confirm the selected Cal
+    /*if (cal.getName() !== TEST_CALENDAR_NAME && !confirmCalendarSelection(cal.getName())){
         return;
-    }
+    }*/
 
-    let scriptLock = LockService.getScriptLock();
-    if (!scriptLock.tryLock(DEFAULT_LOCK_TIMEOUT)){// No Lock
-        return displayNoLockError();
-    }
+
     try {
 
         let noons = SheetsMaster.getNoonsAsObj();
@@ -119,12 +118,13 @@ function generateCalEvents() {
         CalendarMaster.generateMeetings(cal, mergedMeetings);
     }
     catch (e){
-        return displayError(e);
+        displayError(e);
+        return;
     }
-    finally {
-        scriptLock.releaseLock();
-        MyLogger.showLog();
-    }
+
+    MyLogger.showLog();
+    SpreadsheetApp.getUi().alert("Done with se stuff")
+
 
 }
 

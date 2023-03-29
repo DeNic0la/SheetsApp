@@ -1,10 +1,10 @@
 import {MyLogger} from "./Logger";
+import { Range } from "./specific-types";
 
 export const NOONS_TITLE = "NACHMITTAGE"
 export const MEETINGS_TITLE = "SITZUNGEN"
 export const LAGER = "LAGER"
 
-export type Range = GoogleAppsScript.Spreadsheet.Range;
 export type Direction = GoogleAppsScript.Spreadsheet.Direction;
 export class AdvancedSheetDataMaster {
 

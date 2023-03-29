@@ -24,10 +24,11 @@ interface DateEntryInfo {
     place: string,
     calId: CalenderIdField,
     excused: ExcusedField,
+    /**
+     * Represents the Index the Entry has in the Range.
+     */
+    indexInNamedRange: number,
 
-}
-export interface TypesafeCalender{
-    getEventById(id:String):TypesafeCalendarEvent
 }
 
 
@@ -88,3 +89,4 @@ export {
 }
 export type Calendar = GoogleAppsScript.Calendar.Calendar;
 export type CalendarEvent = GoogleAppsScript.Calendar.CalendarEvent;
+export type Range = GoogleAppsScript.Spreadsheet.Range;

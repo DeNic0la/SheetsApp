@@ -15,7 +15,7 @@ export class CalendarMaster {
             let id = CalendarMaster.upsertMeetingCalender(cal, meeting)
 
             // set Calender Id to Sheet
-            rangeByName.getCell((i + 1) /*Index + 1 */, 8).setValue(id);
+            rangeByName.getCell((meeting.indexInNamedRange + 1) /*Index + 1 */, 8).setValue(id);
         }
     }
 
@@ -30,7 +30,7 @@ export class CalendarMaster {
             let id = CalendarMaster.upsertNoonCalender(cal, noon)
 
             // set Calender Id to Sheet
-            rangeByName.getCell((i + 1) /*Index + 1 */, 8).setValue(id);
+            rangeByName.getCell((noon.indexInNamedRange + 1) /*Index + 1 */, 8).setValue(id);
         }
     }
 
@@ -79,8 +79,5 @@ export class CalendarMaster {
         return calEvent.getId();
     }
 
-    static get calendar(){
-        return CalendarApp.getCalendarById(Constant.CALENDER_ID);
-    }
 
 }

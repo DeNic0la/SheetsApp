@@ -1,3 +1,5 @@
+// This Code gets transpiled to JS, but its not supposed to be JS but GS. GS has some minor diffrences to JS, therfore you cant initialize static variables like one is used to.
+
 export class Constant {
     static TimePlaceRegexp: RegExp;
     static MeetingListRegexp: RegExp;
