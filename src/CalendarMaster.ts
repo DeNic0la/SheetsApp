@@ -23,8 +23,6 @@ export class CalendarMaster {
     static generateNoons(cal: Calendar, noons: NoonInfo[]): void {
         let rangeByName = DataRangeManger.getRange(Constant.AREA_NAME_NOON);
 
-
-        console.time("fetch")
         let result = [];
         for (let noon of noons) {
             if (noon.calId){
@@ -33,8 +31,6 @@ export class CalendarMaster {
                 result.push(eventById)
             }
         }
-        console.timeEnd("fetch")
-        console.time("updates")
 
 
         for (let noon of noons){
@@ -50,8 +46,6 @@ export class CalendarMaster {
                 noon.event.setLocation(info.place)
             }
         }
-        console.timeEnd("updates")
-        console.time("creates")
 
         let idsToPatch:{index:number,calEv: GoogleAppsScript.Calendar.CalendarEvent}[] = []
         for (let noon of noons){
@@ -64,14 +58,11 @@ export class CalendarMaster {
                 idsToPatch.push({index: noon.indexInNamedRange,calEv:calendarEvent})
             }
         }
-        console.timeEnd("creates")
-        console.time("idPatch")
 
 
         for (let patchObj of idsToPatch) {
             rangeByName.getCell(patchObj.index+1,8).setValue(patchObj.calEv.getId());
         }
-        console.timeEnd("idPatch")
 
     }
 
