@@ -9,7 +9,7 @@ export type DriveFile =  GoogleAppsScript.Drive.File
 export type DriveFolder =  GoogleAppsScript.Drive.Folder
 const MEETING_FOLDER_PROP_KEY = "SelectedMeetingFolder"
 const SELECTED_MEETING_PRESET_KEY = "SelectedMeetingPreset"
-const MEETING_FILENAME_PREFIX = "TODO"
+const MEETING_FILENAME_PREFIX = "Sitzung"
 
 export class DriveMaster {
 
@@ -51,8 +51,8 @@ export class DriveMaster {
             for (let noon of meeting.noons) {
                 let tableRow = table.insertTableRow(empty+i);
                 i++;
-                tableRow.getCell(0).setText(noon.name ?? "")
-                tableRow.getCell(1).setText(noon.lead ?? "");
+                tableRow.appendTableCell().setText(noon.name ?? "")
+                tableRow.appendTableCell().setText(noon.lead ?? "");
             }
             body.replaceText("_Datum",Utilities.formatDate(meeting.startDate,"GMT+2","dd.MM.yyyy"))
             body.replaceText("_Uhrzeit",Utilities.formatDate(meeting.startDate,"GMT+2","HH:mm"))
