@@ -33,6 +33,7 @@ interface DateEntryInfo {
 
 
 interface NoonInfo extends DateEntryInfo {
+    event: GoogleAppsScript.Calendar.CalendarEvent | undefined;
     name: TopicField,
     lead: LeadField,
     lunch: LunchField,

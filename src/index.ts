@@ -10,7 +10,6 @@ import {
     getCurrentCalendarName,
     selectCalendar,
 } from "./CalendarSelectorMaster";
-import {displayError, displayNoLockError} from "./Util";
 import {AdvancedSheetDataMaster} from "./AdvancedSheetDataMaster";
 import {submitEventCallback} from "./CustomPicker";
 import {buildUI } from "./UiBuilder";
@@ -48,13 +47,8 @@ function check_permissions_on_no_auth(){
 }
 
 function show_settings(){
-    let ui = SpreadsheetApp.getUi();
-    ui.alert(
-        "Aktuelle Einstellungen",
-        `Der Ausgewählte Kalender ist: ${getCurrentCalendarName()}
-        Das Informationslevel ist auf: ${getDebugStateProp()}`,
-        ui.ButtonSet.OK
-    )
+    UiMaster.showMessageDialog(`Der Ausgewählte Kalender ist: ${getCurrentCalendarName()}
+        Das Informationslevel ist auf: ${getDebugStateProp()}`,"Aktuelle Einstellungen")
 }
 
 const TEST_CALENDAR_NAME = "TestCalendar";
@@ -105,9 +99,9 @@ function generateCalEvents() {
     let cal: Calendar = CalendarApp.getCalendarById(calendarId);
 
     // Prompt the User to confirm the selected Cal
-    /*if (cal.getName() !== TEST_CALENDAR_NAME && !confirmCalendarSelection(cal.getName())){
+    if (cal.getName() !== TEST_CALENDAR_NAME && !confirmCalendarSelection(cal.getName())){
         return;
-    }*/
+    }
 
 
     //try {

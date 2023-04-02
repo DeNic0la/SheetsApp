@@ -10,10 +10,14 @@ const AREA_NAME_NOON = "nachmittage"
 export class SheetsMaster {
 
     static getNoonsAsObj(): NoonInfo[] {
-        let noons = DataRangeManger.getDataByRange(AREA_NAME_NOON);
+        console.time("GetNoonValues")
+        let range = DataRangeManger.getRange(AREA_NAME_NOON);
+        let noons = range.getValues();
         let noonObjs = [];
+        console.timeEnd("GetNoonValues")
         // First row is the Header Row, therefore start at 1
         for (let i = 1; i < noons.length; i++) {
+            console.time("Noon"+i)
             let noon = noons[i];
 
             if (Validator.isValidNoonEntryFields(noon)) {
@@ -24,6 +28,7 @@ export class SheetsMaster {
                 MyLogger.info("Nachmittag Nr:" + (i) + " wurde übersprungen")
                 HighlightMaster.highlightValidationErrorInNoon(i,noon)
             }
+            console.timeEnd("Noon"+i)
 
         }
         return noonObjs;
@@ -101,7 +106,8 @@ export class SheetsMaster {
     }
 
     static getMeetingsAsObj(): MeetingInfo[] {
-        let meetings = DataRangeManger.getDataByRange(Constant.AREA_NAME_MEETINGS);
+        let range = DataRangeManger.getRange(Constant.AREA_NAME_MEETINGS);
+        let meetings = range.getValues();
         let meetingObjs = [];
         // The first row is the Header row, therefore start at 1
         for (let i = 1; i < meetings.length; i++) {
@@ -112,7 +118,7 @@ export class SheetsMaster {
  //               UiMaster.showMessageDialog("Sitzung Nr:" + (i) + " wurde übersprungen")
                 MyLogger.info("Sitzung Nr:" + (i) + " wurde übersprungen")
 
-                HighlightMaster.highlightValidationErrorInMeeting(i,meeting)
+                HighlightMaster.highlightValidationErrorInMeeting(i,meeting,range)
             }
         }
         return meetingObjs;

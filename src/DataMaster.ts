@@ -15,7 +15,7 @@ export class DataMaster {
                     if (noonInfo) {
                         meetingNoonObjs.push(noonInfo)
                     } else {
-                        MyLogger.warn("Folgender Nachmittag der Sitzung vom " + meeting.date + " wurde nich gefunden:" + meetingNoons[j]+"- "+JSON.stringify(meeting))
+                        MyLogger.info("Folgender Nachmittag der Sitzung vom " + meeting.date + " wurde nich gefunden:" + meetingNoons[j]+"- "+JSON.stringify(meeting))
                     }
                 }
                 meetings[i].noons = meetingNoonObjs;

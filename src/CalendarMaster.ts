@@ -1,6 +1,8 @@
-import {Calendar, CalendarEvent, MeetingInfo, NoonInfo} from "./specific-types";
+import {Calendar, CalendarEvent, DateEntryInfo, MeetingInfo, NoonInfo} from "./specific-types";
 import {Constant} from "./Constant";
 import {DataMaster} from "./DataMaster";
+import {DataRangeManger} from "./DataRangeManger";
+import {MyLogger} from "./Logger";
 
 export class CalendarMaster {
     static generateMeetings(cal: Calendar, meetings: MeetingInfo[]) {
@@ -19,17 +21,75 @@ export class CalendarMaster {
     }
 
     static generateNoons(cal: Calendar, noons: NoonInfo[]): void {
-        let rangeByName = SpreadsheetApp.getActiveSpreadsheet().getRangeByName(Constant.AREA_NAME_NOON);
-        if (rangeByName === null) {
-            throw new Error("Folgender bereich wurde nicht gesetzt: " + Constant.AREA_NAME_NOON)
+        let rangeByName = DataRangeManger.getRange(Constant.AREA_NAME_NOON);
+
+
+        console.time("fetch")
+        let result = [];
+        for (let noon of noons) {
+            if (noon.calId){
+                let eventById = cal.getEventById(noon.calId);
+                noon.event = eventById
+                result.push(eventById)
+            }
         }
-        for (let i = 0; i < noons.length; i++) {
-            let noon = noons[i];
+        console.timeEnd("fetch")
+        console.time("updates")
 
-            let id = CalendarMaster.upsertNoonCalender(cal, noon)
 
-            // set Calender Id to Sheet
-            rangeByName.getCell((noon.indexInNamedRange + 1) /*Index + 1 */, 8).setValue(id)
+        for (let noon of noons){
+            if (noon.event){
+                let info = this.getNoonCalenderInfo(noon);
+                if (noon.event.getTitle() === info.title
+                    && noon.event.getDescription() === info.context)
+                    continue;
+
+                noon.event.setTitle(info.title)
+                noon.event.setTime(noon.startDate,noon.endDate)
+                noon.event.setDescription(info.context)
+                noon.event.setLocation(info.place)
+            }
+        }
+        console.timeEnd("updates")
+        console.time("creates")
+
+        let idsToPatch:{index:number,calEv: GoogleAppsScript.Calendar.CalendarEvent}[] = []
+        for (let noon of noons){
+            if (!noon.event){
+                let info = this.getNoonCalenderInfo(noon);
+                let calendarEvent = cal.createEvent(info.title,noon.startDate,noon.endDate,{
+                    description: info.context,
+                    place: info.place
+                });
+                idsToPatch.push({index: noon.indexInNamedRange,calEv:calendarEvent})
+            }
+        }
+        console.timeEnd("creates")
+        console.time("idPatch")
+
+
+        for (let patchObj of idsToPatch) {
+            rangeByName.getCell(patchObj.index+1,8).setValue(patchObj.calEv.getId());
+        }
+        console.timeEnd("idPatch")
+
+    }
+
+    static getMeetingCalenderInfo(meeting: MeetingInfo) {
+        const normalMeeting = meeting.normalMeeting;
+
+        return {
+            title: normalMeeting ? "Jungschisitzung" : meeting.meetingType,
+            place:  (meeting.place.trim() === "Sekretariat" ? "Sekretariat Markuskirche Luzern" : (meeting.place.trim() === "MK" ? "Markuskirche Luzern" : meeting.place)),
+            context: DataMaster.getMeetingContext(meeting)
+        }
+    }
+
+    static getNoonCalenderInfo(noon: NoonInfo) {
+        return {
+            title: `Jungschi [ ${noon.place} ]`,
+            place:  (noon.place.trim() === "MK" ? "Markuskirche Luzern" : noon.place),
+            context: DataMaster.getNoonContext(noon)
         }
     }
 
@@ -67,11 +127,17 @@ export class CalendarMaster {
             calEvent = cal.getEventById(meeting.calId);
         }
         if (calEvent === null) {
-            calEvent = cal.createEvent(title, meeting.startDate, meeting.endDate);
-        } else {
-            calEvent.setTitle(title);
-            calEvent.setTime(meeting.startDate, meeting.endDate);
+            calEvent = cal.createEvent(title, meeting.startDate, meeting.endDate,{
+                description: context,
+                place: place
+            });
+            return calEvent.getId();
         }
+        if (calEvent.getTitle() === title && calEvent.getDescription() === context){
+            return calEvent.getId();
+        }
+        calEvent.setTitle(title);
+        calEvent.setTime(meeting.startDate, meeting.endDate);
         calEvent.setDescription(context);
         calEvent.setLocation(place);
 
