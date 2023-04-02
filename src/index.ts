@@ -57,7 +57,7 @@ function restTestEnviroment() {
     let testCalId = userProperties.getProperty(TEST_CALENDAR_ID_PROPERTY_KEY);
     if (testCalId){
         let oldTestCal = CalendarApp.getCalendarById(testCalId);
-        if (oldTestCal.getName() === TEST_CALENDAR_NAME){
+        if (oldTestCal && oldTestCal.getName() === TEST_CALENDAR_NAME){
             oldTestCal.deleteCalendar();
         }
     }
