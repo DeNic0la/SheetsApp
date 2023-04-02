@@ -1,7 +1,10 @@
 import { babel } from "@rollup/plugin-babel";
 import { nodeResolve } from "@rollup/plugin-node-resolve";
+import copy from 'rollup-plugin-copy'
+
 
 const extensions = [".ts", ".js"];
+
 
 const preventTreeShakingPlugin = () => {
     return {
@@ -29,5 +32,13 @@ export default {
             mainFields: ['jsnext:main', 'main']
         }),
         babel({ extensions, babelHelpers: "runtime" }),
+        copy({
+            targets: [
+                {src: 'src/html/*.html', dest: 'build'},
+                {src: 'appsscript.json', dest: 'build'}
+            ],
+            verbose: true,
+            overwrite: true
+        })
     ],
 };
