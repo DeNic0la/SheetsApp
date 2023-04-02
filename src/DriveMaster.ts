@@ -69,7 +69,7 @@ export class DriveMaster {
     private static getEmptyRow(table:GoogleAppsScript.Document.Table): number | undefined{
         for (let i = 1; i < table.getNumRows(); i++) {
             let row = table.getRow(i);
-            if (row.getCell(0).getText() === "") {
+            if (row.getCell(0).getText() === "__Fill") {
                 return i;
             }
         }
