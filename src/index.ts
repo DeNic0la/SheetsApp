@@ -33,7 +33,6 @@ function unset(){
     buildUI(undefined);
 }
 
-const DEFAULT_LOCK_TIMEOUT = 1000;
 
 function onInstall(e:any) {
     onOpen(e);
@@ -104,7 +103,6 @@ function generateCalEvents() {
     }
 
 
-    //try {
         console.time("NoonFetch")
 
         let noons = SheetsMaster.getNoonsAsObj();
@@ -125,15 +123,10 @@ function generateCalEvents() {
     console.timeEnd("GenMeetings")
     console.time("END")
 
-    /*}
-    catch (e){
-        displayError(e);
-        return;
-    }*/
+
     SpreadsheetApp.flush();
     MyLogger.showLog();
     console.timeEnd("END")
-
 
 }
 

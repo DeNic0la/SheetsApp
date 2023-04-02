@@ -58,7 +58,8 @@ export class SheetsMaster {
             excused: array[5],
             impMessage: array[6],
             calId: array[7],
-            indexInNamedRange: index
+            indexInNamedRange: index,
+            event: undefined
         }
     }
 
