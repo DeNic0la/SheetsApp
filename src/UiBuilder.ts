@@ -27,8 +27,9 @@ export function buildUI(event:any) {
         if (state.isExtendedOrHigher){
             settings.addItem("Testkalender Generieren","restTestEnviroment")
             menu.addItem("Neuformatieren","reformat_entire_spreadsheet")
-
-
+            settings.addItem("Sitzungs Ordner Setzen","pick_meetings_folder")
+            settings.addItem("Preset für Meetings auswählen","pick_preset_document")
+            menu.addItem("Dokumente Für Meetings erstellen","generate_meeting_docs")
         }
 
         if (calId) {

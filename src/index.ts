@@ -16,6 +16,7 @@ import {buildUI } from "./UiBuilder";
 import {call_debug_state_picker, getDebugState, getDebugStateProp} from "./DebugState";
 import {FormatMaster} from "./FormatMaster";
 import {UiMaster} from "./UiMaster";
+import {DriveMaster} from "./DriveMaster";
 
 function main_call_debug_state_picker() {
     call_debug_state_picker();
@@ -158,4 +159,16 @@ function getDataFromProp(){
     }
     MyLogger.warn("Data Not Found")
     throw new Error("DATA NOT FOUND")
+}
+function pick_meetings_folder(){
+    DriveMaster.pickMeetingFolder();
+}
+function pick_preset_document(){
+    DriveMaster.pickPreset();
+}
+function generate_meeting_docs(){
+    let noons = SheetsMaster.getNoonsAsObj();
+    let mergedMeetings = DataMaster.mergeNoonsToMeetings(noons, SheetsMaster.getMeetingsAsObj());
+    DriveMaster.generateDocumentForMeetings(mergedMeetings)
+    MyLogger.showLog();
 }
