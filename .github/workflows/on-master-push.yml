@@ -1,0 +1,26 @@
+name: on-master-push
+on:
+  push:
+    branches:
+      - master
+jobs:
+  install-build-push:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+          cache: 'npm'
+      - run: npm ci
+      - run: npm run build
+      - uses: daikikatsuragawa/clasp-action@v1.1.0
+        with:
+          accessToken: ${{ secrets.ACCESS_TOKEN }}
+          idToken: ${{ secrets.ID_TOKEN }}
+          refreshToken: ${{ secrets.REFRESH_TOKEN }}
+          clientId: ${{ secrets.CLIENT_ID }}
+          clientSecret: ${{ secrets.CLIENT_SECRET }}
+          scriptId: ${{ secrets.SCRIPT_ID }}
+          command: 'push'
+          rootDir: 'build'

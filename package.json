@@ -3,8 +3,7 @@
   "main": "index.js",
   "scripts": {
     "build": "rollup --config",
-    "deploy": "clasp push",
-    "push": "run-s build deploy"
+    "push": "clasp push"
   },
   "dependencies": {
     "moment": "^2.29.1"
