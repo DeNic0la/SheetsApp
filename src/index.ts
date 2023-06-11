@@ -169,7 +169,7 @@ function validate_validity(){
     }
 
     if (errors.length !== 0){
-        UiMaster.showMessageDialog(errors.join('\n'))
+        UiMaster.showMessageDialog(errors.join('\n<br>'))
     }
     else {
         UiMaster.showMessageDialog("Alles OK")
