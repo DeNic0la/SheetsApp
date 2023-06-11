@@ -16,6 +16,8 @@ import {buildUI } from "./UiBuilder";
 import {call_debug_state_picker, getDebugState, getDebugStateProp} from "./DebugState";
 import {FormatMaster} from "./FormatMaster";
 import {UiMaster} from "./UiMaster";
+import {DriveMaster} from "./DriveMaster";
+import {Validator} from "./Validator";
 
 function main_call_debug_state_picker() {
     call_debug_state_picker();
@@ -135,7 +137,48 @@ function confirmCalendarSelection(calendar_name:string):boolean{
     let promptResponse = ui.alert("Kalender Bestätigen",`Die aktuellen Aktionen werden mit dem "${calendar_name}" ausgeführt, fortfahren?`, ui.ButtonSet.YES_NO);
     return (promptResponse == ui.Button.YES)
 }
+function validate_validity(){
+    let errors:string[] = [];
+    let noons = SheetsMaster.getNoonsAsObj();
+    let meetings = SheetsMaster.getMeetingsAsObj();
 
+    for (let noon of noons) {
+        let date = noon.date instanceof Date ? noon.date : new Date(noon.date)
+        let weekday = Utilities.formatDate(date,"GMT+2","E")
+        if (!weekday.startsWith("Sat")){
+            errors.push(`${noon.date} ist kein Samstag oder kein Datum`)
+        }
+    }
+    let noonDates = noons.map(value => value.date);
+    let foundNoonDates:string[] = []
+
+    for (let meeting of meetings) {
+        if (Validator.meetingIsNormalMeeting(meeting)){
+            for (let leNoon of meeting.noons) {
+                let findNoonByDate = DataMaster.findNoonByDate(noons,leNoon);
+
+                if (!findNoonByDate){
+                    errors.push(`${meeting.date} hat einen Nachmitag: ${leNoon}, welcher nicht existiert`)
+                }
+                else {
+                    foundNoonDates.push(leNoon)
+
+                }
+            }
+        }
+    }
+
+    if (errors.length !== 0){
+        UiMaster.showMessageDialog(errors.join('\n<br>'))
+    }
+    else {
+        UiMaster.showMessageDialog("Alles OK")
+
+    }
+
+
+
+}
 
 
 
@@ -158,4 +201,16 @@ function getDataFromProp(){
     }
     MyLogger.warn("Data Not Found")
     throw new Error("DATA NOT FOUND")
+}
+function pick_meetings_folder(){
+    DriveMaster.pickMeetingFolder();
+}
+function pick_preset_document(){
+    DriveMaster.pickPreset();
+}
+function generate_meeting_docs(){
+    let noons = SheetsMaster.getNoonsAsObj();
+    let mergedMeetings = DataMaster.mergeNoonsToMeetings(noons, SheetsMaster.getMeetingsAsObj());
+    DriveMaster.generateDocumentForMeetings(mergedMeetings)
+    MyLogger.showLog();
 }

@@ -13,6 +13,9 @@ export interface PickerContext{
          */
         key: string|number
     }[],
+    /**
+     * Refers to the data value
+     */
     current: string|number|null,
     propertyName: string,
     propertyType: propertyType,
