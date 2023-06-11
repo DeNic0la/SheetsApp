@@ -4,7 +4,7 @@
   "scripts": {
     "build": "rollup --config",
     "push": "clasp push",
-    "prettier": "prettier --write ."
+    "prettier": "prettier --write --ignore-unknown ."
   },
   "dependencies": {
     "moment": "^2.29.1"
