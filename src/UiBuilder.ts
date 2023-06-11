@@ -15,6 +15,7 @@ export function buildUI(event:any) {
     let settings = ui.createMenu(SETTINGS);
 
 
+    menu.addItem("Datenvalidierung","validate_validity");
     settings.addItem(PICK_LOGLEVEL, "main_call_debug_state_picker");
 
     if (event && event.authMode == ScriptApp.AuthMode.NONE) {
