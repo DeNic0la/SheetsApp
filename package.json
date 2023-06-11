@@ -3,7 +3,8 @@
   "main": "index.js",
   "scripts": {
     "build": "rollup --config",
-    "push": "clasp push"
+    "push": "clasp push",
+    "prettier": "prettier --write ."
   },
   "dependencies": {
     "moment": "^2.29.1"
