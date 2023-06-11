@@ -1,2 +1,5 @@
 node_modules
 build
+.clasp.json
+package-lock.json
+.idea
