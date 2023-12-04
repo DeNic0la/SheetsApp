@@ -1,7 +1,8 @@
 import {CustomPicker} from "./CustomPicker";
 import {MyLogger} from "./Logger";
-import {MeetingInfo} from "./specific-types";
+import {MeetingInfo, NoonInfo} from "./specific-types";
 import {Validator} from "./Validator";
+import {PresetMaster} from "./PresetMaster";
 
 const REQUIRED_MIME_TYPE = MimeType.GOOGLE_DOCS//"'application/vnd.google-apps.document'"
 const PRESET_REQUIRED_NAME = "preset"
@@ -10,7 +11,8 @@ export type DriveFolder =  GoogleAppsScript.Drive.Folder
 const MEETING_FOLDER_PROP_KEY = "SelectedMeetingFolder"
 const SELECTED_MEETING_PRESET_KEY = "SelectedMeetingPreset"
 const MEETING_FILENAME_PREFIX = "Sitzung"
-
+const SELECTED_NOON_DOCUMENT_PRESET_PROP_KEY =  "SelectedNoonDocumentPreset"
+const NOON_FOLDER_PROP_KEY = "SelectedNoonFolder"
 export class DriveMaster {
 
     static generateDocumentForMeetings(meetings:MeetingInfo[]){
@@ -66,6 +68,23 @@ export class DriveMaster {
         }
 
     }
+
+    static generateDocumentForNoons(noonInfos:NoonInfo[]){
+        let noonPreset = this.getNoonPreset();
+        let noonFolder = this.getNoonFolder();
+        if (!noonPreset || !noonFolder){
+            MyLogger.info("Ordner oder Preset wurde nicht gesetzt");
+            return;
+        }
+        for (let noonInfo of noonInfos) {
+
+            let document = PresetMaster.getDocumentCopy(`${noonInfo.name} ${Utilities.formatDate(noonInfo.startDate,"GMT+2","dd.MM.yyyy")}`,noonPreset,noonFolder);
+            PresetMaster.fillNoonInfo(document,noonInfo);
+            document.saveAndClose();
+
+        }
+
+    }
     private static getEmptyRow(table:GoogleAppsScript.Document.Table): number | undefined{
         for (let i = 1; i < table.getNumRows(); i++) {
             let row = table.getRow(i);
@@ -86,14 +105,35 @@ export class DriveMaster {
         picker.show("Wähle einen Sitzungsordner")
         //MyLogger.showLog();
     }
+    static pickNoonsFolder(){
+        let options = this.getNoonFoldersOptions();
+        let picker = new CustomPicker({
+            data: options,
+            current: this.getMeetingFolderId() ?? "",
+            propertyName: NOON_FOLDER_PROP_KEY,
+            propertyType: "User"
+        })
+        picker.show("Wähle einen Nachmitagspläne Ordner")
+        //MyLogger.showLog();
+    }
     static getMeetingFolderId(){
         let property = PropertiesService.getUserProperties().getProperty(MEETING_FOLDER_PROP_KEY);
+        if (property)
+            return property;
+    }
+    static getNoonFolderId(){
+        let property = PropertiesService.getUserProperties().getProperty(NOON_FOLDER_PROP_KEY);
         if (property)
             return property;
     }
 
     static getPresetId(){
         let property = PropertiesService.getUserProperties().getProperty(SELECTED_MEETING_PRESET_KEY);
+        if (property)
+            return property;
+    }
+    static getNoonPresetId(){
+        let property = PropertiesService.getUserProperties().getProperty(SELECTED_NOON_DOCUMENT_PRESET_PROP_KEY);
         if (property)
             return property;
     }
@@ -110,6 +150,19 @@ export class DriveMaster {
         }
     }
 
+    static getNoonFolder(){
+        let meetingFolderId = this.getNoonFolderId();
+        if (meetingFolderId){
+            return DriveApp.getFolderById(meetingFolderId);
+        }
+    }
+    static getNoonPreset(){
+        let presetId = this.getNoonPresetId();
+        if (presetId){
+            return DriveApp.getFileById(presetId);
+        }
+    }
+
     static pickPreset(){
         let options = this.getPresetDocumentOptions();
         let picker = new CustomPicker({
@@ -119,6 +172,16 @@ export class DriveMaster {
             propertyType: "User"
         })
         picker.show("Wähle einene Sitzungsvorlage")
+    }
+    static pickNoonPreset(){
+        let options = this.getPresetDocumentOptions();
+        let picker = new CustomPicker({
+            data: options,
+            current: this.getNoonPresetId() ?? "",
+            propertyName: SELECTED_NOON_DOCUMENT_PRESET_PROP_KEY,
+            propertyType: "User"
+        })
+        picker.show("Wähle einene Nachmittags Sitzungsvorlage")
     }
 
 
@@ -138,6 +201,20 @@ export class DriveMaster {
 
     static getMeetingsFoldersOptions(){
         let iterator = DriveApp.getFoldersByName("Sitzungen");
+        let folders = []
+        for (let i = 0; i < 10 && iterator.hasNext(); i++) {
+            MyLogger.info(i + " Files found");
+            let folder = iterator.next();
+            let name = folder.getName();
+            MyLogger.info(name);
+            folders.push({value:folder.getId(),key:this.getExtendendedFolderInfo(folder)})
+        }
+        MyLogger.info("Return")
+        return folders;
+    }
+
+    static getNoonFoldersOptions(){
+        let iterator = DriveApp.getFoldersByName("Nachmittagspläne");
         let folders = []
         for (let i = 0; i < 10 && iterator.hasNext(); i++) {
             MyLogger.info(i + " Files found");

@@ -208,9 +208,20 @@ function pick_meetings_folder(){
 function pick_preset_document(){
     DriveMaster.pickPreset();
 }
+function pick_noons_folder(){
+    DriveMaster.pickNoonsFolder();
+}
+function pick_noons_document(){
+    DriveMaster.pickNoonPreset();
+}
 function generate_meeting_docs(){
     let noons = SheetsMaster.getNoonsAsObj();
     let mergedMeetings = DataMaster.mergeNoonsToMeetings(noons, SheetsMaster.getMeetingsAsObj());
     DriveMaster.generateDocumentForMeetings(mergedMeetings)
+    MyLogger.showLog();
+}
+function generate_noon_docs(){
+    let noons = SheetsMaster.getNoonsAsObj();
+    DriveMaster.generateDocumentForNoons(noons)
     MyLogger.showLog();
 }

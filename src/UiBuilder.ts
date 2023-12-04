@@ -1,5 +1,6 @@
 import {getCalendarId} from "./CalendarSelectorMaster";
 import {getDebugState} from "./DebugState";
+import {DriveMaster} from "./DriveMaster";
 
 
 const PICK_CAL = "Kalender Auswählen";
@@ -30,7 +31,13 @@ export function buildUI(event:any) {
             menu.addItem("Neuformatieren","reformat_entire_spreadsheet")
             settings.addItem("Sitzungs Ordner Setzen","pick_meetings_folder")
             settings.addItem("Preset für Meetings auswählen","pick_preset_document")
-            menu.addItem("Dokumente Für Meetings erstellen","generate_meeting_docs")
+            if (DriveMaster.getMeetingFolderId() !== undefined && DriveMaster.getPresetId() !== undefined)
+                menu.addItem("Dokumente Für Meetings erstellen","generate_meeting_docs")
+            settings.addSeparator();
+            settings.addItem("Nachmittagspläne Ordner Setzen","pick_noons_folder")
+            settings.addItem("Preset für Nachmitagspläne auswählen","pick_noons_document")
+            if (DriveMaster.getNoonFolderId() !== undefined && DriveMaster.getNoonPresetId() !== undefined)
+                menu.addItem("Dokumente Für Nachmitäge erstellen","generate_noon_docs")
         }
 
         if (calId) {
