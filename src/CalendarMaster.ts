@@ -3,6 +3,7 @@ import {Constant} from "./Constant";
 import {DataMaster} from "./DataMaster";
 import {DataRangeManger} from "./DataRangeManger";
 import {MyLogger} from "./Logger";
+import {getPlace} from "./StringFormatUtils";
 
 export class CalendarMaster {
     static generateMeetings(cal: Calendar, meetings: MeetingInfo[]) {
@@ -35,6 +36,7 @@ export class CalendarMaster {
 
         for (let noon of noons){
             if (noon.event){
+                const place = getPlace(noon);
                 let info = this.getNoonCalenderInfo(noon);
                 if (noon.event.getTitle() === info.title
                     && noon.event.getDescription() === info.context)
@@ -43,17 +45,18 @@ export class CalendarMaster {
                 noon.event.setTitle(info.title)
                 noon.event.setTime(noon.startDate,noon.endDate)
                 noon.event.setDescription(info.context)
-                noon.event.setLocation(info.place)
+                noon.event.setLocation(place.full)
             }
         }
 
         let idsToPatch:{index:number,calEv: GoogleAppsScript.Calendar.CalendarEvent}[] = []
         for (let noon of noons){
             if (!noon.event){
+                const place = getPlace(noon);
                 let info = this.getNoonCalenderInfo(noon);
                 let calendarEvent = cal.createEvent(info.title,noon.startDate,noon.endDate,{
                     description: info.context,
-                    place: info.place
+                    place: place.full
                 });
                 idsToPatch.push({index: noon.indexInNamedRange,calEv:calendarEvent})
             }
@@ -68,27 +71,28 @@ export class CalendarMaster {
 
     static getMeetingCalenderInfo(meeting: MeetingInfo) {
         const normalMeeting = meeting.normalMeeting;
+        const place = getPlace(meeting);
 
         return {
             title: normalMeeting ? "Jungschisitzung" : meeting.meetingType,
-            place:  (meeting.place.trim() === "Sekretariat" ? "Sekretariat Markuskirche Luzern" : (meeting.place.trim() === "MK" ? "Markuskirche Luzern" : meeting.place)),
+            place:  place.short,
             context: DataMaster.getMeetingContext(meeting)
         }
     }
 
     static getNoonCalenderInfo(noon: NoonInfo) {
+        const place = getPlace(noon);
         return {
-            title: `Jungschi [ ${noon.place} ]`,
-            place:  (noon.place.trim() === "MK" ? "Markuskirche Luzern" : noon.place),
+            title: `Jungschi [ ${place.short} ]`,
+            place:  place.full,
             context: DataMaster.getNoonContext(noon)
         }
     }
 
     static upsertNoonCalender(cal: Calendar, noon: NoonInfo): string {
-        let title = `Jungschi [ ${noon.place} ]`;
+        const place = getPlace(noon);
+        let title = `Jungschi [ ${place.short} ]`;
         let context = DataMaster.getNoonContext(noon);
-
-        let place = (noon.place.trim() === "MK" ? "Markuskirche Luzern" : noon.place);
         let calEvent: CalendarEvent | null = null
 
         if (typeof noon.calId === "string") {
@@ -101,17 +105,17 @@ export class CalendarMaster {
             calEvent.setTime(noon.startDate, noon.endDate);
         }
         calEvent.setDescription(context);
-        calEvent.setLocation(place);
+        calEvent.setLocation(place.full);
 
         return calEvent.getId();
     }
 
     static upsertMeetingCalender(cal: Calendar, meeting: MeetingInfo) {
+        const place = getPlace(meeting);
         const normalMeeting = meeting.normalMeeting;
         let title = normalMeeting ? "Jungschisitzung" : meeting.meetingType;
         let context = DataMaster.getMeetingContext(meeting);
 
-        let place = (meeting.place.trim() === "Sekretariat" ? "Sekretariat Markuskirche Luzern" : (meeting.place.trim() === "MK" ? "Markuskirche Luzern" : meeting.place));
         let calEvent: CalendarEvent | null = null;
 
         if (typeof meeting.calId === "string") {
@@ -120,7 +124,7 @@ export class CalendarMaster {
         if (calEvent === null) {
             calEvent = cal.createEvent(title, meeting.startDate, meeting.endDate,{
                 description: context,
-                place: place
+                place: place.short
             });
             return calEvent.getId();
         }
@@ -130,7 +134,7 @@ export class CalendarMaster {
         calEvent.setTitle(title);
         calEvent.setTime(meeting.startDate, meeting.endDate);
         calEvent.setDescription(context);
-        calEvent.setLocation(place);
+        calEvent.setLocation(place.short);
 
         return calEvent.getId();
     }
